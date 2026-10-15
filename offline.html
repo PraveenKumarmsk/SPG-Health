@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SPG Labs — Offline</title>
+<meta name="theme-color" content="#0f2b3d">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SPG Labs">
+<style>
+  /* ── RESET ──────────────────────────────────────────────────────────── */
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+  /* ── PAGE BACKGROUND ────────────────────────────────────────────────── */
+  html,body{
+    height:100%;
+    font-family:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+    background:linear-gradient(145deg,#0f2b3d 0%,#1b2f44 50%,#0f2b3d 100%);
+    color:white;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Animated background dots */
+  body::before{
+    content:'';
+    position:fixed;inset:0;
+    background-image:
+      radial-gradient(circle at 20% 30%,rgba(74,222,128,.06) 0%,transparent 40%),
+      radial-gradient(circle at 80% 70%,rgba(96,165,250,.06) 0%,transparent 40%),
+      radial-gradient(circle at 50% 50%,rgba(124,58,237,.04) 0%,transparent 50%);
+    pointer-events:none;z-index:0;
+    animation:bgFloat 15s ease-in-out infinite;
+  }
+  @keyframes bgFloat{
+    0%,100%{transform:scale(1) rotate(0deg);}
+    50%{transform:scale(1.05) rotate(1deg);}
+  }
+
+  /* ── MAIN CONTAINER ─────────────────────────────────────────────────── */
+  .offline-container{
+    position:relative;z-index:1;
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;
+    padding:20px;
+  }
+
+  .offline-card{
+    background:rgba(255,255,255,.06);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:32px;
+    padding:48px 40px 40px;
+    max-width:460px;
+    width:100%;
+    text-align:center;
+    box-shadow:
+      0 30px 70px rgba(0,0,0,.5),
+      inset 0 1px 0 rgba(255,255,255,.08);
+    animation:cardIn .6s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes cardIn{
+    from{opacity:0;transform:translateY(30px) scale(.96);}
+    to{opacity:1;transform:translateY(0) scale(1);}
+  }
+
+  /* ── ICON ───────────────────────────────────────────────────────────── */
+  .offline-icon{
+    font-size:5rem;
+    line-height:1;
+    margin-bottom:20px;
+    display:inline-block;
+    animation:iconPulse 2.5s ease-in-out infinite;
+    filter:drop-shadow(0 8px 20px rgba(96,165,250,.3));
+  }
+  @keyframes iconPulse{
+    0%,100%{transform:scale(1) translateY(0);opacity:1;}
+    50%{transform:scale(1.06) translateY(-6px);opacity:.85;}
+  }
+
+  /* ── TITLE ──────────────────────────────────────────────────────────── */
+  .offline-title{
+    font-size:1.75rem;
+    font-weight:800;
+    letter-spacing:-.5px;
+    margin-bottom:12px;
+    background:linear-gradient(135deg,#4ade80 0%,#60a5fa 60%,#a78bfa 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    color:transparent;
+  }
+
+  .offline-subtitle{
+    font-size:.92rem;
+    line-height:1.6;
+    opacity:.7;
+    margin-bottom:26px;
+    max-width:340px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  /* ── STATUS PILL ────────────────────────────────────────────────────── */
+  .status-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.1);
+    padding:11px 22px;
+    border-radius:40px;
+    font-size:.83rem;
+    font-weight:600;
+    margin-bottom:28px;
+    transition:all .3s;
+  }
+  .status-pill.online{
+    background:rgba(34,197,94,.15);
+    border-color:rgba(34,197,94,.35);
+    color:#86efac;
+  }
+  .status-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#ef4444;
+    animation:dotBlink 1.5s ease-in-out infinite;
+    flex-shrink:0;
+    box-shadow:0 0 12px rgba(239,68,68,.7);
+  }
+  .status-dot.online{
+    background:#22c55e;
+    box-shadow:0 0 12px rgba(34,197,94,.7);
+  }
+  @keyframes dotBlink{
+    0%,100%{opacity:1;transform:scale(1);}
+    50%{opacity:.4;transform:scale(.85);}
+  }
+
+  /* ── RETRY BUTTON ───────────────────────────────────────────────────── */
+  .retry-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    background:linear-gradient(135deg,#155799,#2c7a4d);
+    color:white;
+    border:none;
+    padding:14px 38px;
+    border-radius:30px;
+    font-size:.94rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:all .25s cubic-bezier(.4,0,.2,1);
+    box-shadow:0 10px 28px rgba(44,122,77,.35);
+    font-family:inherit;
+    margin-bottom:8px;
+  }
+  .retry-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 36px rgba(44,122,77,.5);
+    background:linear-gradient(135deg,#1a6bb8,#35945c);
+  }
+  .retry-btn:active{transform:translateY(0) scale(.98);}
+  .retry-btn:disabled{
+    opacity:.55;
+    cursor:wait;
+    transform:none!important;
+  }
+  .retry-btn .spin{
+    display:inline-block;
+    animation:spin 1s linear infinite;
+  }
+  @keyframes spin{
+    to{transform:rotate(360deg);}
+  }
+
+  /* ── INFO BOXES ─────────────────────────────────────────────────────── */
+  .info-box{
+    margin-top:26px;
+    padding-top:22px;
+    border-top:1px solid rgba(255,255,255,.08);
+    font-size:.74rem;
+    opacity:.6;
+    line-height:1.7;
+    text-align:left;
+  }
+  .info-box .box-title{
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    font-size:.66rem;
+    opacity:.75;
+    margin-bottom:10px;
+    color:#4ade80;
+  }
+  .info-box ul{
+    list-style:none;
+    padding-left:0;
+  }
+  .info-box li{
+    padding:3px 0;
+    padding-left:20px;
+    position:relative;
+  }
+  .info-box li::before{
+    content:'▸';
+    position:absolute;
+    left:0;
+    color:#60a5fa;
+    font-weight:700;
+  }
+
+  /* ── CACHED BADGE ───────────────────────────────────────────────────── */
+  .cached-badge{
+    margin-top:20px;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    background:rgba(96,165,250,.1);
+    border:1px solid rgba(96,165,250,.2);
+    color:#93c5fd;
+    font-size:.7rem;
+    font-weight:600;
+    padding:7px 14px;
+    border-radius:20px;
+    letter-spacing:.3px;
+  }
+  .cached-badge::before{
+    content:'📦';
+    font-size:.85rem;
+  }
+
+  /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
+  @media (max-width:480px){
+    .offline-card{padding:38px 26px 32px;border-radius:26px;}
+    .offline-icon{font-size:4rem;margin-bottom:16px;}
+    .offline-title{font-size:1.5rem;}
+    .offline-subtitle{font-size:.86rem;}
+    .retry-btn{padding:13px 30px;font-size:.88rem;width:100%;max-width:280px;}
+  }
+
+  @media (max-height:640px){
+    .offline-card{padding:30px 26px 26px;}
+    .offline-icon{font-size:3.5rem;margin-bottom:12px;}
+    .offline-title{font-size:1.35rem;}
+    .offline-subtitle{font-size:.82rem;margin-bottom:20px;}
+  }
+
+  /* ── REDUCED MOTION ─────────────────────────────────────────────────── */
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{
+      animation-duration:.01ms!important;
+      animation-iteration-count:1!important;
+      transition-duration:.01ms!important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="offline-container">
+  <div class="offline-card">
+
+    <!-- Animated icon -->
+    <div class="offline-icon">📡</div>
+
+    <!-- Title -->
+    <h1 class="offline-title">You're Offline</h1>
+
+    <!-- Subtitle -->
+    <p class="offline-subtitle">
+      SPG Labs needs an internet connection to sync your medical records.
+      Please check your network and try again — the app reloads automatically when you're back online.
+    </p>
+
+    <!-- Live status pill -->
+    <div class="status-pill" id="statusPill">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">No connection detected</span>
+    </div>
+
+    <br>
+
+    <!-- Retry button -->
+    <button class="retry-btn" id="retryBtn" onclick="retryConnection()">
+      <span id="retryIcon">🔄</span>
+      <span id="retryText">Try Again</span>
+    </button>
+
+    <!-- Cached badge -->
+    <div class="cached-badge">App shell available offline</div>
+
+    <!-- Info box -->
+    <div class="info-box">
+      <div class="box-title">Quick Tips</div>
+      <ul>
+        <li>Turn on Wi-Fi or mobile data</li>
+        <li>Move to an area with better signal</li>
+        <li>Disable airplane mode if enabled</li>
+        <li>Previously loaded pages may still work</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<script>
+"use strict";
+
+(function () {
+  var EMBED = /[?&]embed=1/.test(location.search);   // shown as an overlay inside the app shell
+  var statusPill  = document.getElementById("statusPill");
+  var statusDot   = document.getElementById("statusDot");
+  var statusText  = document.getElementById("statusText");
+  var retryBtn    = document.getElementById("retryBtn");
+  var retryIcon   = document.getElementById("retryIcon");
+  var retryText   = document.getElementById("retryText");
+
+  var wasOffline = true;
+
+  // Connection is back: tell the shell (overlay mode) or go to the app (standalone mode)
+  function goOnline() {
+    if (EMBED) {
+      try { parent.postMessage({ type: "spg:online" }, location.origin); } catch (e) {}
+      return;
+    }
+    try { location.replace("index.html"); } catch (e) {}
+  }
+
+  function updateStatus() {
+    var online = navigator.onLine;
+    if (online) {
+      statusPill.classList.add("online");
+      statusDot.classList.add("online");
+      statusText.textContent = "Back online — reloading…";
+      if (wasOffline) {
+        wasOffline = false;
+        setTimeout(goOnline, 900);
+      }
+    } else {
+      statusPill.classList.remove("online");
+      statusDot.classList.remove("online");
+      statusText.textContent = "No connection detected";
+      wasOffline = true;
+    }
+  }
+
+  function resetBtn() {
+    retryBtn.disabled = false;
+    retryIcon.textContent = "🔄";
+    retryIcon.classList.remove("spin");
+    retryText.textContent = "Try Again";
+  }
+
+  window.retryConnection = function () {
+    retryBtn.disabled = true;
+    retryIcon.textContent = "⏳";
+    retryIcon.classList.add("spin");
+    retryText.textContent = "Checking…";
+
+    // navigator.onLine can be wrong, so do a real network request (the SW never caches "?ping=")
+    var controller = (typeof AbortController !== "undefined") ? new AbortController() : null;
+    var timeoutId = setTimeout(function () {
+      if (controller) try { controller.abort(); } catch (e) {}
+    }, 4000);
+
+    fetch("manifest.json?ping=" + Date.now(), {
+      method: "HEAD",
+      cache: "no-store",
+      signal: controller ? controller.signal : undefined
+    })
+    .then(function () {
+      clearTimeout(timeoutId);
+      wasOffline = false;
+      statusPill.classList.add("online");
+      statusDot.classList.add("online");
+      statusText.textContent = "Back online — reloading…";
+      setTimeout(goOnline, 400);
+    })
+    .catch(function () {
+      clearTimeout(timeoutId);
+      resetBtn();
+      statusText.textContent = "Still offline — check your connection";
+    });
+  };
+
+  window.addEventListener("online", updateStatus);
+  window.addEventListener("offline", updateStatus);
+  setInterval(updateStatus, 4000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) updateStatus(); });
+
+  updateStatus();
+  console.log("[Offline] Page ready · online:", navigator.onLine, "· embed:", EMBED);
+})();
+</script>
+
+</body>
+</html>

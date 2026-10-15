@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SPG Labs · Complete Medical Suite</title>
+<meta name="description" content="Complete Medical Management Suite — Records, Reports, Bookings, Analytics">
+
+<!-- PWA -->
+<meta name="theme-color" content="#1f3b4c">
+<meta name="application-name" content="SPG Labs">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SPG Labs">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#0f2b3d;overflow:hidden;
+  font-family:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;color:#fff}
+
+/* ── App frame (Google Apps Script web app) ─────────────────────────── */
+#frameWrap{position:fixed;inset:0;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#appFrame{width:100%;height:100%;border:0;display:block;background:#0f2b3d}
+
+/* ── Splash ──────────────────────────────────────────────────────────── */
+#splash{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  background:linear-gradient(145deg,#0f2b3d,#1b2f44);transition:opacity .35s}
+#splash.hide{opacity:0;pointer-events:none}
+#splash img{width:96px;height:96px;border-radius:22px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+#splash .t{font-weight:800;font-size:1.15rem;letter-spacing:.3px}
+#splash .s{font-size:.78rem;opacity:.6}
+.spin{width:30px;height:30px;border:3px solid rgba(255,255,255,.18);border-top-color:#22c55e;border-radius:50%;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── First-run setup card ────────────────────────────────────────────── */
+#setup{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:20px;
+  background:linear-gradient(145deg,#0f2b3d,#1b2f44)}
+#setup .card{background:#fff;color:#1f3b4c;border-radius:28px;padding:32px 28px;width:100%;max-width:460px;box-shadow:0 40px 80px rgba(0,0,0,.45)}
+#setup h2{font-size:1.2rem;margin-bottom:6px}
+#setup p{font-size:.82rem;color:#667;line-height:1.55;margin-bottom:16px}
+#setup input{width:100%;padding:12px 16px;border:2px solid #e2edf2;border-radius:20px;font-size:.88rem}
+#setup input:focus{border-color:#2c7a4d;outline:none;box-shadow:0 0 0 3px rgba(44,122,77,.12)}
+#setup button{width:100%;margin-top:14px;padding:13px;border:none;border-radius:28px;color:#fff;font-weight:700;font-size:.92rem;cursor:pointer;
+  background:linear-gradient(135deg,#155799,#2c7a4d)}
+#setupErr{color:#b91c1c;font-size:.78rem;font-weight:600;margin-top:10px;display:none}
+
+/* ── Offline overlay (offline.html inside an iframe) ─────────────────── */
+#offlineFrame{position:fixed;inset:0;z-index:50;width:100%;height:100%;border:0;display:none;background:#0f2b3d}
+
+/* ── Fallback install button (only if the in-app button can't prompt) ── */
+#installFallback{position:fixed;top:calc(12px + env(safe-area-inset-top));right:14px;z-index:90;display:none;align-items:center;gap:6px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:none;padding:9px 20px;border-radius:25px;font-weight:700;font-size:.82rem;cursor:pointer;
+  box-shadow:0 4px 14px rgba(34,197,94,.45)}
+#installFallback.show{display:inline-flex}
+
+/* ── Toast ───────────────────────────────────────────────────────────── */
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,140%);z-index:100;
+  background:linear-gradient(135deg,#1f3b4c,#2c5f8a);color:#fff;padding:11px 20px;border-radius:30px;font-weight:600;font-size:.82rem;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px);
+  transition:transform .3s cubic-bezier(.4,0,.2,1)}
+#toast.show{transform:translate(-50%,0)}
+#toast button{background:#22c55e;color:#fff;border:none;padding:6px 14px;border-radius:20px;font-weight:700;font-size:.76rem;cursor:pointer;display:none}
+
+/* ── iOS install helper banner ───────────────────────────────────────── */
+#iosBanner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(140%);width:calc(100% - 32px);max-width:440px;z-index:99999;
+  background:linear-gradient(135deg,#1f3b4c,#2c5f8a);border-radius:22px;padding:18px 20px;box-shadow:0 20px 50px rgba(0,0,0,.45);
+  color:#fff;display:none;border:1px solid rgba(255,255,255,.15);transition:transform .4s cubic-bezier(.4,0,.2,1)}
+#iosBanner.show{display:block;transform:translateX(-50%) translateY(0)}
+#iosBanner .head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+#iosBanner .ic{font-size:1.8rem}
+#iosBanner .tt{font-weight:800;font-size:.95rem}
+#iosBanner .ss{font-size:.72rem;opacity:.65;margin-top:2px}
+#iosBanner .steps{font-size:.78rem;line-height:1.6;opacity:.9;background:rgba(255,255,255,.08);padding:10px 14px;border-radius:12px;margin-bottom:12px}
+#iosBanner .steps strong{color:#4ade80}
+#iosBanner .act{display:flex;gap:8px;justify-content:flex-end}
+#iosBanner button{border:none;padding:8px 18px;border-radius:20px;font-weight:700;font-size:.78rem;cursor:pointer}
+#iosBanner .later{background:rgba(255,255,255,.12);color:#fff}
+#iosBanner .ok{background:#22c55e;color:#fff}
+</style>
+</head>
+<body>
+
+<div id="frameWrap">
+  <iframe id="appFrame" title="SPG Labs" allow="clipboard-read; clipboard-write; fullscreen" referrerpolicy="origin"></iframe>
+</div>
+
+<div id="splash">
+  <img src="icons/icon-192.png" alt="SPG Labs">
+  <div class="t">SPG Labs</div>
+  <div class="spin"></div>
+  <div class="s">Loading Complete Medical Suite…</div>
+</div>
+
+<div id="setup">
+  <div class="card">
+    <h2>🔬 SPG Labs — first-time setup</h2>
+    <p>Paste your Google Apps Script <b>Web app URL</b> (Deploy → Manage deployments → Web app URL, ends with <b>/exec</b>). It is saved on this device only.</p>
+    <input id="setupUrl" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
+    <div id="setupErr"></div>
+    <button id="setupSave">Save &amp; Open App</button>
+  </div>
+</div>
+
+<iframe id="offlineFrame" title="Offline"></iframe>
+
+<button id="installFallback" type="button">⬇️ Install App</button>
+
+<div id="toast"><span id="toastText"></span><button id="toastAction" type="button"></button></div>
+
+<div id="iosBanner">
+  <div class="head">
+    <span class="ic">📲</span>
+    <div><div class="tt">Install SPG Labs</div><div class="ss">Get the full app experience</div></div>
+  </div>
+  <div class="steps">Tap <strong>Share</strong> ⎋ at the bottom of Safari, then choose <strong>Add to Home Screen</strong> ➕</div>
+  <div class="act">
+    <button class="later" id="iosLater" type="button">Later</button>
+    <button class="ok" id="iosOk" type="button">Got it</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+
+  // ══ CONFIG ═══════════════════════════════════════════════════════════════
+  // Paste your Apps Script Web app URL here (ends with /exec).
+  // Leave empty to be asked once on first launch (saved in this browser).
+  var GAS_URL = "";
+  // ══════════════════════════════════════════════════════════════════════════
+
+  var LS_URL = "spg_gas_url";
+  var TABS   = ["add", "view", "doctors", "bookings", "users", "audit", "report"];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var appFrame = $("appFrame"), splash = $("splash"), setup = $("setup");
+  var offFrame = $("offlineFrame"), toastEl = $("toast");
+  var appLoaded = false, splashTimer = null, toastTimer = null;
+
+  // ── Helper functions ─────────────────────────────────────────────────────
+  function isStandalone() {
+    return window.matchMedia("(display-mode: standalone)").matches
+        || window.matchMedia("(display-mode: minimal-ui)").matches
+        || window.navigator.standalone === true;
+  }
+  function isIOSSafari() {
+    var ua = navigator.userAgent;
+    var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    var isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+    return isIOS && isSafari;
+  }
+
+  // ── Toast ────────────────────────────────────────────────────────────────
+  function showToast(msg, actionLabel, actionFn, ms) {
+    $("toastText").textContent = msg;
+    var b = $("toastAction");
+    if (actionLabel) { b.textContent = actionLabel; b.style.display = "inline-block"; b.onclick = actionFn; }
+    else { b.style.display = "none"; b.onclick = null; }
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, ms || 3500);
+  }
+
+  // ── URL params: ?tab=xyz  ?source=pwa ────────────────────────────────────
+  var qs = new URLSearchParams(location.search);
+  var tab = (qs.get("tab") || "").toLowerCase();
+  if (TABS.indexOf(tab) < 0) tab = "";
+  var source = qs.get("source") || "";
+
+  if (qs.get("setup") === "1") { try { localStorage.removeItem(LS_URL); } catch (e) {} }
+
+  // Track PWA launches (?source=pwa or running standalone)
+  if (source === "pwa" || isStandalone()) {
+    try {
+      var n = (parseInt(localStorage.getItem("spg_pwa_launches"), 10) || 0) + 1;
+      localStorage.setItem("spg_pwa_launches", String(n));
+      localStorage.setItem("spg_pwa_last_launch", new Date().toISOString());
+    } catch (e) {}
+    console.log("[PWA] Launched as app · source:", source || "standalone", "· tab:", tab || "-");
+  }
+
+  // Strip params from the address bar so "Add to Home Screen" on iOS never pins a ?tab=
+  try { history.replaceState(null, "", location.pathname); } catch (e) {}
+
+  // ── Load the Apps Script app ─────────────────────────────────────────────
+  function getGasUrl() {
+    var u = (GAS_URL || "").trim();
+    if (!u) { try { u = localStorage.getItem(LS_URL) || ""; } catch (e) {} }
+    return u;
+  }
+  function validGasUrl(v) {
+    try {
+      var u = new URL(v);
+      return u.protocol === "https:" && u.hostname === "script.google.com" && /\/exec$/.test(u.pathname);
+    } catch (e) { return false; }
+  }
+  function hideSplash() {
+    clearTimeout(splashTimer);
+    splash.classList.add("hide");
+  }
+  function loadApp() {
+    var base = getGasUrl();
+    if (!base || !validGasUrl(base)) { splash.classList.add("hide"); setup.style.display = "flex"; return; }
+    setup.style.display = "none";
+    if (!navigator.onLine) { showOffline(); return; }
+    var u = new URL(base);
+    u.searchParams.set("source", source || "web");
+    if (tab) u.searchParams.set("tab", tab);
+    u.searchParams.set("standalone", isStandalone() ? "1" : "0");
+    splash.classList.remove("hide");
+    appFrame.src = u.href;
+    appLoaded = true;
+    splashTimer = setTimeout(hideSplash, 15000);
+  }
+  appFrame.addEventListener("load", function () { if (appFrame.getAttribute("src")) hideSplash(); });
+
+  $("setupSave").addEventListener("click", function () {
+    var v = ($("setupUrl").value || "").trim().split("?")[0].split("#")[0];
+    var err = $("setupErr");
+    if (!validGasUrl(v)) {
+      err.textContent = "Enter the Web app URL that starts with https://script.google.com/ and ends with /exec";
+      err.style.display = "block"; return;
+    }
+    try { localStorage.setItem(LS_URL, v); } catch (e) {}
+    err.style.display = "none";
+    loadApp();
+  });
+  $("setupUrl").addEventListener("keydown", function (e) { if (e.key === "Enter") $("setupSave").click(); });
+
+  // ── Offline handling ─────────────────────────────────────────────────────
+  function showOffline() {
+    if (!offFrame.getAttribute("src")) offFrame.src = "offline.html?embed=1";
+    offFrame.style.display = "block";
+    splash.classList.add("hide");
+  }
+  function onBackOnline() {
+    offFrame.style.display = "none";
+    if (!appLoaded) loadApp(); else showToast("Back online", null, null, 2500);
+  }
+  window.addEventListener("offline", showOffline);
+  window.addEventListener("online", onBackOnline);
+
+  // ── Install flow (NO automatic prompt — only after a user click) ─────────
+  var deferredInstallPrompt = null;
+  var fallbackBtn = $("installFallback");
+
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+  });
+  window.addEventListener("appinstalled", function () {
+    deferredInstallPrompt = null;
+    fallbackBtn.classList.remove("show");
+    showToast("✅ SPG Labs installed");
+  });
+
+  function showIOSBanner() { var b = $("iosBanner"); b.style.display = "block"; void b.offsetWidth; b.classList.add("show"); }
+  function hideIOSBanner() {
+    var b = $("iosBanner"); b.classList.remove("show");
+    setTimeout(function () { b.style.display = "none"; }, 400);
+  }
+  $("iosLater").addEventListener("click", hideIOSBanner);
+  $("iosOk").addEventListener("click", hideIOSBanner);
+
+  async function requestInstall() {
+    if (isStandalone()) return;
+    if (!deferredInstallPrompt) {
+      if (isIOSSafari()) showIOSBanner();
+      else showToast("Browser menu → Install app / Add to Home screen", null, null, 5000);
+      return;
+    }
+    try {
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      fallbackBtn.classList.remove("show");
+    } catch (err) {
+      // Click came from inside the app frame and the browser did not pass the gesture on:
+      // show a direct button the user can tap.
+      fallbackBtn.classList.add("show");
+    }
+  }
+  fallbackBtn.addEventListener("click", requestInstall);
+
+  // The in-app header "Install App" button (inside the Apps Script page) posts a message here
+  window.addEventListener("message", function (e) {
+    var d = e.data;
+    if (!d || typeof d !== "object" || typeof d.type !== "string") return;
+    if (e.origin === location.origin) {
+      if (d.type === "spg:online") onBackOnline();
+      return;
+    }
+    if (!/^https:\/\/([a-z0-9-]+\.)*(googleusercontent|google)\.com$/.test(e.origin)) return;
+    if (d.type === "spg:install") requestInstall();
+  });
+
+  // ── Service worker ───────────────────────────────────────────────────────
+  if ("serviceWorker" in navigator) {
+    var hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      if (hadController) showToast("🚀 App updated", "Reload", function () { location.reload(); }, 8000);
+      hadController = true;
+    });
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").then(function (reg) {
+        setInterval(function () { reg.update(); }, 60 * 60 * 1000);
+      }).catch(function () {});
+    });
+  }
+
+  // ── Go ───────────────────────────────────────────────────────────────────
+  loadApp();
+})();
+</script>
+</body>
+</html>
