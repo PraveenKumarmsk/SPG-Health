@@ -1,322 +1,1753 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>SPG Labs · Complete Medical Suite</title>
-<meta name="description" content="Complete Medical Management Suite — Records, Reports, Bookings, Analytics">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>SPG Labs · Complete Medical Suite</title>
 
-<!-- PWA -->
-<meta name="theme-color" content="#1f3b4c">
-<meta name="application-name" content="SPG Labs">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SPG Labs">
-<meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PWA META TAGS                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1f3b4c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SPG Labs">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="SPG Labs">
+  <meta name="description" content="Complete Medical Management Suite — Records, Reports, Bookings, Analytics">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:#0f2b3d;overflow:hidden;
-  font-family:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;color:#fff}
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:linear-gradient(145deg,#0f2b3d,#1b2f44);padding:20px;min-height:100vh}
+    #loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;position:fixed;inset:0;background:linear-gradient(145deg,#0f2b3d,#1b2f44);z-index:9999}
+    .login-card{background:white;border-radius:36px;padding:44px 40px 36px;width:100%;max-width:420px;box-shadow:0 40px 80px rgba(0,0,0,.45);animation:slideUp .4s ease}
+    @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .login-logo{text-align:center;margin-bottom:28px}
+    .login-logo h1{background:linear-gradient(135deg,#155799,#159957);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:1.7rem;font-weight:800}
+    .login-logo p{color:#888;font-size:.82rem;margin-top:4px}
+    .login-field{margin-bottom:18px}
+    .login-field label{display:block;font-weight:700;font-size:.78rem;color:#1f3b4c;margin-bottom:7px}
+    .login-field input{width:100%;padding:12px 16px;border:2px solid #e2edf2;border-radius:22px;font-size:.9rem;transition:.2s}
+    .login-field input:focus{border-color:#2c7a4d;outline:none;box-shadow:0 0 0 3px rgba(44,122,77,.12)}
+    .login-btn{width:100%;padding:13px;background:linear-gradient(135deg,#155799,#2c7a4d);color:white;border:none;border-radius:30px;font-size:.95rem;font-weight:700;cursor:pointer;transition:.25s;margin-top:6px}
+    .login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(44,122,77,.35)}
+    .login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .login-error{background:#fff0f0;border:1.5px solid #fca5a5;color:#b91c1c;padding:10px 16px;border-radius:16px;font-size:.82rem;margin-bottom:16px;font-weight:600;display:none}
+    .login-warning{background:#fff8e1;border:1.5px solid #ffc107;color:#7c5a00;padding:10px 16px;border-radius:16px;font-size:.82rem;margin-bottom:16px;font-weight:600;display:none}
+    .login-role-badge{text-align:center;margin-top:18px;font-size:.75rem;color:#aaa}
+    #userTopBar{background:rgba(255,255,255,.97);border-radius:28px;padding:10px 22px;margin-bottom:18px;box-shadow:0 8px 20px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .user-info-bar{display:flex;align-items:center;gap:12px}
+    .user-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#155799,#2c7a4d);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem}
+    .user-name-bar{font-weight:700;color:#1f3b4c;font-size:.9rem}
+    .role-pill{display:inline-block;padding:3px 12px;border-radius:30px;font-size:.7rem;font-weight:700;letter-spacing:.5px}
+    .role-pill.Admin{background:#fef3c7;color:#b45309}
+    .role-pill.User{background:#d1fae5;color:#065f46}
+    .role-pill.Owner{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff}
+    .logout-btn{background:#e63946;color:white;border:none;padding:7px 20px;border-radius:25px;cursor:pointer;font-weight:600;font-size:.82rem;transition:.2s}
+    .logout-btn:hover{background:#c0392b}
+    .container{max-width:1600px;margin:0 auto}
+    .header{background:rgba(255,255,255,.96);padding:24px 28px;border-radius:38px;margin-bottom:28px;box-shadow:0 20px 35px -10px rgba(0,0,0,.25);text-align:center}
+    .header h1{background:linear-gradient(135deg,#155799,#159957);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:2rem;font-weight:700}
+    .tabs{display:flex;gap:12px;margin-bottom:25px;flex-wrap:wrap}
+    .tab-btn{background:rgba(255,255,255,.15);backdrop-filter:blur(6px);border:none;padding:10px 28px;border-radius:50px;color:white;font-weight:600;font-size:.9rem;cursor:pointer;transition:.25s}
+    .tab-btn.active{background:white;color:#155799;box-shadow:0 8px 18px rgba(0,0,0,.2)}
+    .form-box{background:white;padding:28px 32px;border-radius:32px;box-shadow:0 24px 45px -15px rgba(0,0,0,.25)}
+    .three-col-layout{display:grid;grid-template-columns:1fr 1.2fr .9fr;gap:28px;margin-bottom:28px}
+    .section-subtitle{font-size:1rem;font-weight:700;color:#1f3b4c;margin-bottom:18px;padding-bottom:8px;border-bottom:3px solid #2c7a4d;display:inline-block}
+    .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+    .form-group label{font-weight:700;color:#1f3b4c;font-size:.8rem;letter-spacing:.3px}
+    .form-group label.required::after{content:" *";color:#e63946}
+    input,select,textarea{padding:10px 14px;border:2px solid #e2edf2;border-radius:20px;font-size:.9rem;transition:.2s;background:#fefefe;width:100%}
+    input:focus,select:focus,textarea:focus{border-color:#2c7a4d;outline:none;box-shadow:0 0 0 3px rgba(44,122,77,.1)}
+    .calculated-field{background-color:#f0f7f3;font-weight:600}
+    .btn{padding:8px 22px;border:none;border-radius:35px;font-weight:600;margin:4px;cursor:pointer;transition:.2s;font-size:.85rem;display:inline-flex;align-items:center;gap:6px}
+    .btn-primary{background:#2c7a4d;color:white}.btn-primary:hover{background:#1f5e3a}
+    .btn-danger{background:#e63946;color:white}.btn-danger:hover{background:#c0392b}
+    .btn-info{background:#3b82f6;color:white}.btn-info:hover{background:#2563eb}
+    .btn-secondary{background:#6c757d;color:white}.btn-secondary:hover{background:#5a6268}
+    .btn-success{background:#28a745;color:white}.btn-success:hover{background:#218838}
+    .btn-warning{background:#ffc107;color:#1f3b4c}.btn-warning:hover{background:#e0a800}
+    .btn-sm{padding:6px 16px;font-size:.8rem}
+    .test-select-area{border:2px solid #e2edf2;border-radius:20px;padding:12px;background:#fff;margin-bottom:12px}
+    .test-search{width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:25px;margin-bottom:12px;font-size:.8rem}
+    .test-categories{max-height:400px;overflow-y:auto;margin-bottom:8px}
+    .test-category{margin-bottom:12px}
+    .category-title{font-weight:bold;background:#1f3b4c;color:white;padding:5px 10px;border-radius:12px;font-size:.7rem;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+    .test-item{display:flex;align-items:center;padding:5px 8px;margin:2px 0;border-radius:10px;cursor:pointer;transition:background .2s}
+    .test-item:hover{background:#e8f5e9}
+    .test-item input{margin-right:10px;width:16px;height:16px;cursor:pointer}
+    .test-item label{flex:1;cursor:pointer;font-weight:normal;font-size:.8rem;margin:0;color:#333}
+    .test-price{color:#2c7a4d;font-weight:600;font-size:.75rem;min-width:55px;text-align:right}
+    .selected-tests-area{background:#e8f5e9;border-radius:16px;padding:12px;margin-top:8px}
+    .selected-test-tag{display:inline-flex;align-items:center;background:#2c7a4d;color:white;padding:4px 10px;border-radius:20px;font-size:.7rem;margin:3px;gap:8px}
+    .selected-test-tag .remove-test{cursor:pointer;font-weight:bold;padding:0 4px;border-radius:50%;background:rgba(255,255,255,.2)}
+    .total-fee-box{margin-top:10px;padding-top:8px;border-top:1px solid #c8e6c9;font-weight:bold;font-size:1rem;text-align:right}
+    .finance-highlight{background:#f8fafc;border-radius:20px;padding:4px 8px}
+    .action-buttons{text-align:center;margin-top:20px;padding-top:20px;border-top:2px solid #e2edf2}
+    .add-test-option{background:#e8f5e9;color:#2c7a4d;font-weight:bold;padding:8px 12px;margin:5px 0;border-radius:10px;cursor:pointer;text-align:center;border:1px dashed #2c7a4d}
+    .add-test-option:hover{background:#c8e6c9}
+    .manage-btn{cursor:pointer;margin-left:10px;font-size:.7rem;background:rgba(255,255,255,.25);padding:2px 8px;border-radius:12px;transition:.2s}
+    .alert{position:fixed;top:20px;right:20px;z-index:3000;background:#1f2f3e;color:white;padding:12px 24px;border-radius:50px;font-weight:500;box-shadow:0 8px 16px -8px black;animation:slideIn .3s ease;max-width:360px}
+    @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:2000}
+    .modal-content{background:white;border-radius:30px;padding:25px;text-align:center;max-width:520px;width:90%;margin:auto;max-height:85vh;overflow-y:auto}
+    .kpi-card{background:#fff;border-radius:18px;padding:18px 16px 14px;position:relative;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.07);border:1px solid #eef2f7;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;gap:4px}
+    .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--kc,#2c7a4d);border-radius:18px 18px 0 0}
+    .kpi-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.12)}
+    .kpi-icon{font-size:1.25rem;opacity:.8;margin-bottom:2px}
+    .kpi-val{font-size:1.5rem;font-weight:900;color:var(--kc,#1a2b3c);line-height:1.1}
+    .kpi-label{font-size:.68rem;font-weight:700;color:#8898aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+    .table-container{overflow-x:auto;max-height:600px;overflow-y:auto;border-radius:20px;border:1px solid #e9f0f3}
+    .data-table{width:100%;border-collapse:collapse;font-size:.75rem}
+    .data-table th{background:#1f3b4c;color:white;padding:12px 6px;position:sticky;top:0;z-index:10}
+    .data-table td{padding:10px 6px;border-bottom:1px solid #f0f4f7;vertical-align:middle}
+    .data-table tr:hover{background:#f8fafc}
+    .status-badge{display:inline-block;padding:3px 10px;border-radius:30px;font-size:.65rem;font-weight:bold}
+    .status-Completed{background:#d3f0df;color:#0a4b2a}
+    .status-Pending{background:#fff1cf;color:#b45309}
+    .status-Cancelled{background:#ffe0e0;color:#b91c1c}
+    .pagination{display:flex;justify-content:center;gap:8px;padding:20px;background:white;border-top:1px solid #e9ecef;flex-wrap:wrap}
+    .page-btn{padding:6px 12px;border:1px solid #dee2e6;background:white;border-radius:8px;cursor:pointer;font-size:.75rem}
+    .page-btn.active{background:#2c7a4d;color:white;border-color:#2c7a4d}
+    .page-btn:hover:not(.active){background:#f0f4f7}
+    .search-section{background:#f8fafc;border-radius:20px;padding:20px;margin-bottom:20px}
+    .search-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:15px;align-items:center}
+    .search-input-wrapper{flex:2;min-width:200px}
+    .search-input-wrapper input{border-radius:25px;border:2px solid #e2edf2;padding:10px 18px;font-size:.9rem;width:100%}
+    .filter-chips{display:flex;gap:12px;flex-wrap:wrap;margin-top:15px}
+    .chip{padding:6px 18px;border-radius:40px;background:#e2e8f0;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;border:none}
+    .chip:hover{background:#cbd5e0}
+    .chip.active{background:#2c7a4d;color:white}
+    .records-per-page{display:flex;align-items:center;gap:10px;margin-left:auto}
+    .records-per-page select{width:auto;padding:5px 10px;font-size:.8rem;border-radius:12px}
+    .batch-bar{background:#e8f5e9;border-radius:16px;padding:12px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .batch-bar.hidden{display:none}
+    .doctor-stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;margin-top:20px}
+    .doctor-stat-card{background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);transition:all .25s;border:1px solid #eef2f7}
+    .doctor-stat-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.13)}
+    .doctor-header{background:linear-gradient(135deg,#1f3b4c,#2c5f8a);padding:18px 20px;position:relative;overflow:hidden}
+    .doctor-header::after{content:'👨‍⚕️';position:absolute;right:50px;top:8px;font-size:2.8rem;opacity:.12;line-height:1}
+    .doctor-header h3{font-size:.95rem;color:#fff;font-weight:700;padding-right:50px;margin:0}
+    .doctor-header .doc-sub{font-size:.68rem;color:rgba(255,255,255,.55);margin-top:3px}
+    .doctor-card-actions{position:absolute;top:12px;right:12px;z-index:10}
+    .small-delete-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:50%;width:28px;height:28px;color:#fff;cursor:pointer;font-size:13px;transition:.2s;display:flex;align-items:center;justify-content:center}
+    .small-delete-btn:hover{background:#e63946;border-color:#e63946}
+    .doctor-stats-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .doc-metric{background:#f8fafc;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;border:1px solid #eef2f7}
+    .doc-metric-label{font-size:.63rem;font-weight:700;color:#8898aa;text-transform:uppercase;letter-spacing:.5px}
+    .doc-metric-val{font-size:1.15rem;font-weight:900;line-height:1.2}
+    .doc-metric-val.tests{color:#2563eb}.doc-metric-val.fees{color:#059669}
+    .doc-metric-val.commission{color:#d97706}.doc-metric-val.revenue{color:#16a34a}
+    .doctor-footer{background:#f8fafc;padding:9px 18px;text-align:right;font-size:.65rem;color:#aab;border-top:1px solid #eef2f7}
+    .users-table{width:100%;border-collapse:collapse;font-size:.8rem}
+    .users-table th{background:#1f3b4c;color:white;padding:12px 10px;text-align:left}
+    .users-table td{padding:12px 10px;border-bottom:1px solid #f0f4f7;vertical-align:middle}
+    .users-table tr:hover{background:#f8fafc}
+    .role-badge-admin{background:#fef3c7;color:#b45309;padding:3px 12px;border-radius:20px;font-size:.7rem;font-weight:700}
+    .role-badge-user{background:#d1fae5;color:#065f46;padding:3px 12px;border-radius:20px;font-size:.7rem;font-weight:700}
+    .role-badge-owner{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;padding:3px 12px;border-radius:20px;font-size:.7rem;font-weight:700}
+    .add-user-form{background:#f8fafc;border-radius:24px;padding:24px;margin-bottom:24px;border:2px dashed #e2edf2}
+    .add-user-form h3{color:#1f3b4c;font-size:.95rem;margin-bottom:18px}
+    .user-form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+    .pw-strength{height:4px;border-radius:4px;margin-top:6px;transition:.3s}
+    .locked-badge{background:#fee2e2;color:#991b1b;padding:2px 10px;border-radius:20px;font-size:.65rem;font-weight:700}
+    .perm-toggle{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 10px;font-size:.68rem;font-weight:700;cursor:pointer;transition:.2s;border:1.5px solid #e2edf2;user-select:none;background:#f1f5f9}
+    .perm-toggle.granted{background:#d1fae5;border-color:#6ee7b7;color:#065f46}
+    .perm-toggle.denied{background:#fee2e2;border-color:#fca5a5;color:#991b1b}
+    .perm-toggle .perm-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+    .perms-cell{display:flex;gap:4px;flex-wrap:wrap}
+    .perm-section-title{font-size:.6rem;font-weight:800;color:#8898aa;letter-spacing:.8px;text-transform:uppercase;margin:6px 0 4px;display:block}
+    .audit-table{width:100%;border-collapse:collapse;font-size:.72rem}
+    .audit-table th{background:#1f3b4c;color:white;padding:10px 8px;position:sticky;top:0;z-index:10;text-align:left}
+    .audit-table td{padding:8px;border-bottom:1px solid #f0f4f7;vertical-align:middle}
+    .audit-table tr:hover{background:#f8fafc}
+    .audit-action{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.63rem;font-weight:700;white-space:nowrap}
+    .audit-ADD_RECORD{background:#d1fae5;color:#065f46}.audit-EDIT_RECORD{background:#dbeafe;color:#1e40af}
+    .audit-DELETE_RECORD,.audit-DELETE_ALL{background:#fecaca;color:#7f1d1d}
+    .audit-LOGIN_SUCCESS{background:#d1fae5;color:#065f46}.audit-LOGIN_FAILED{background:#fff1cf;color:#b45309}
+    .audit-LOGIN_BLOCKED,.audit-ACCOUNT_LOCKED{background:#fecaca;color:#7f1d1d}
+    .audit-UNLOCK_USER{background:#e0e7ff;color:#3730a3}
+    .audit-CREATE_USER{background:#dbeafe;color:#1e40af}.audit-DELETE_USER{background:#fecaca;color:#7f1d1d}
+    .audit-PASSWORD_CHANGED{background:#fef3c7;color:#b45309}
+    .audit-PW_BLOCKED,.audit-CREATE_BLOCKED,.audit-DELETE_BLOCKED,.audit-PERM_BLOCKED{background:#fecaca;color:#7f1d1d}
+    .audit-SET_PERMISSION{background:#e0e7ff;color:#3730a3}
+    .empty-state{text-align:center;padding:60px;color:#6c757d}
+    .notes-wrapper{margin-top:18px}
+    .security-banner{background:linear-gradient(135deg,#1f3b4c,#2c5f8a);border-radius:20px 20px 0 0;padding:20px 28px;color:white}
+    .security-banner h2{font-size:1.3rem;font-weight:800}
+    .security-banner p{font-size:.78rem;opacity:.65;margin-top:4px}
+    @media(max-width:1100px){.three-col-layout{grid-template-columns:1fr;gap:24px}body{padding:12px}.doctor-stats-grid{grid-template-columns:1fr}}
 
-/* ── App frame (Google Apps Script web app) ─────────────────────────── */
-#frameWrap{position:fixed;inset:0;
-  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-#appFrame{width:100%;height:100%;border:0;display:block;background:#0f2b3d}
 
-/* ── Splash ──────────────────────────────────────────────────────────── */
-#splash{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
-  background:linear-gradient(145deg,#0f2b3d,#1b2f44);transition:opacity .35s}
-#splash.hide{opacity:0;pointer-events:none}
-#splash img{width:96px;height:96px;border-radius:22px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
-#splash .t{font-weight:800;font-size:1.15rem;letter-spacing:.3px}
-#splash .s{font-size:.78rem;opacity:.6}
-.spin{width:30px;height:30px;border:3px solid rgba(255,255,255,.18);border-top-color:#22c55e;border-radius:50%;animation:sp 1s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* PHONE INTERFACE — app-style layout (desktop view is untouched)  */
+    /* ═══════════════════════════════════════════════════════════════ */
+    .tab-btn .ti{display:inline}.tab-btn .tl{display:inline;margin-left:6px}
+    #offlineToast:not(.show){opacity:0;visibility:hidden;box-shadow:none}
+    #offlineToast{transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .2s,visibility .2s}
+    @media(max-width:760px){
+      html{-webkit-text-size-adjust:100%}
+      body{padding:calc(8px + env(safe-area-inset-top)) 10px calc(84px + env(safe-area-inset-bottom)) 10px;background-attachment:fixed}
+      /* top bar */
+      #userTopBar{position:sticky;top:calc(4px + env(safe-area-inset-top));z-index:500;padding:8px 12px;border-radius:20px;margin-bottom:10px;flex-wrap:nowrap}
+      .user-avatar{width:32px;height:32px;font-size:.85rem}
+      .user-name-bar{font-size:.78rem;max-width:34vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #userTopBar .btn-sm{padding:7px 11px;font-size:.72rem;margin:0}
+      #pwaInstallBtn{padding:7px 12px;font-size:.72rem}
+      .logout-btn{padding:7px 12px;font-size:.72rem}
+      /* header banner */
+      .header{padding:12px 16px;border-radius:20px;margin-bottom:12px}
+      .header h1{font-size:1.05rem}
+      .header p{display:none}
+      /* bottom tab bar */
+      .tabs{position:fixed;left:0;right:0;bottom:0;z-index:900;margin:0;gap:3px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+        background:rgba(15,43,61,.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.12);
+        padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px rgba(0,0,0,.35)}
+      .tabs::-webkit-scrollbar{display:none}
+      .tab-btn{flex:1 1 0;min-width:50px;max-width:120px;padding:6px 2px;border-radius:14px;background:transparent;backdrop-filter:none;font-size:.58rem;font-weight:700;
+        display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.15;color:rgba(255,255,255,.7);box-shadow:none;white-space:nowrap}
+      .tab-btn .ti{font-size:1.25rem;display:block}
+      .tab-btn .tl{display:block;margin:0}
+      .tab-btn.active{background:rgba(34,197,94,.2);color:#4ade80;box-shadow:none}
+      /* cards & forms */
+      .form-box{padding:16px 14px;border-radius:22px}
+      .three-col-layout{grid-template-columns:1fr;gap:18px;margin-bottom:16px}
+      input,select,textarea{font-size:16px;padding:12px 14px}
+      .btn{min-height:42px;padding:9px 18px}
+      .btn-sm{min-height:36px}
+      .action-buttons .btn{width:calc(50% - 8px);justify-content:center}
+      .test-categories{max-height:300px}
+      .section-subtitle{font-size:.92rem}
+      /* tables scroll sideways inside their card */
+      .table-container{max-height:none;border-radius:14px}
+      .users-table,.audit-table{display:block;overflow-x:auto;white-space:nowrap}
+      .data-table{font-size:.72rem}
+      .search-row{gap:8px}.search-input-wrapper{min-width:100%;flex:1 1 100%}
+      .records-per-page{margin-left:0}
+      .batch-bar{padding:10px 12px;gap:8px}
+      .pagination{padding:12px}
+      /* grids */
+      .doctor-stats-grid{grid-template-columns:1fr;gap:14px}
+      .user-form-grid{grid-template-columns:1fr}
+      div[style*="1.8fr 1fr"]{grid-template-columns:1fr!important}
+      div[style*="minmax(150px,1fr)"]{grid-template-columns:1fr 1fr!important;gap:10px!important}
+      .kpi-val{font-size:1.25rem}
+      /* modals & toasts */
+      .modal-content{width:94%;padding:20px 16px;border-radius:22px}
+      .alert{left:12px;right:12px;top:calc(12px + env(safe-area-inset-top));max-width:none;text-align:center;border-radius:20px}
+      #offlineToast{top:calc(10px + env(safe-area-inset-top))}
+      #updateToast{bottom:calc(86px + env(safe-area-inset-bottom))}
+      #iosInstallBanner{bottom:calc(86px + env(safe-area-inset-bottom))}
+      /* login */
+      .login-card{padding:30px 22px 24px;border-radius:28px;margin:0 14px}
+      /* Lab Report builder: stack sidebar over preview, shrink the A4 sheet */
+      div:has(> #rptSidebar){flex-direction:column!important;height:auto!important;min-height:0!important}
+      #rptSidebar{width:100%!important;border-right:0!important;border-bottom:2px solid #e2edf2;max-height:none}
+      #rptTopBar{padding:12px 14px}
+      #rptTopBar > div{flex:1 1 100%!important;min-width:100%}
+      #rptTopBar small{display:none!important}
+      #rptTopBar button{flex:1 1 28%!important;padding:10px 8px!important;font-size:.76rem!important}
+      #rptA4{zoom:.42}
+    }
+    @media(max-width:380px){#rptA4{zoom:.36}.tab-btn{min-width:46px}}
 
-/* ── First-run setup card ────────────────────────────────────────────── */
-#setup{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:20px;
-  background:linear-gradient(145deg,#0f2b3d,#1b2f44)}
-#setup .card{background:#fff;color:#1f3b4c;border-radius:28px;padding:32px 28px;width:100%;max-width:460px;box-shadow:0 40px 80px rgba(0,0,0,.45)}
-#setup h2{font-size:1.2rem;margin-bottom:6px}
-#setup p{font-size:.82rem;color:#667;line-height:1.55;margin-bottom:16px}
-#setup input{width:100%;padding:12px 16px;border:2px solid #e2edf2;border-radius:20px;font-size:.88rem}
-#setup input:focus{border-color:#2c7a4d;outline:none;box-shadow:0 0 0 3px rgba(44,122,77,.12)}
-#setup button{width:100%;margin-top:14px;padding:13px;border:none;border-radius:28px;color:#fff;font-weight:700;font-size:.92rem;cursor:pointer;
-  background:linear-gradient(135deg,#155799,#2c7a4d)}
-#setupErr{color:#b91c1c;font-size:.78rem;font-weight:600;margin-top:10px;display:none}
+    /* ── PRINT ──────────────────────────────────────────────────────── */
+    @media print {
+      body > *:not(#printFrame) { display:none !important; }
+      #printFrame { display:block !important; position:fixed; inset:0; width:100%; height:100%; border:none; }
+    }
 
-/* ── Offline overlay (offline.html inside an iframe) ─────────────────── */
-#offlineFrame{position:fixed;inset:0;z-index:50;width:100%;height:100%;border:0;display:none;background:#0f2b3d}
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* PWA STYLES                                                      */
+    /* ═══════════════════════════════════════════════════════════════ */
 
-/* ── Fallback install button (only if the in-app button can't prompt) ── */
-#installFallback{position:fixed;top:calc(12px + env(safe-area-inset-top));right:14px;z-index:90;display:none;align-items:center;gap:6px;
-  background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:none;padding:9px 20px;border-radius:25px;font-weight:700;font-size:.82rem;cursor:pointer;
-  box-shadow:0 4px 14px rgba(34,197,94,.45)}
-#installFallback.show{display:inline-flex}
+    /* Install button */
+    #pwaInstallBtn{
+      background:linear-gradient(135deg,#22c55e,#16a34a);
+      color:white;border:none;padding:8px 20px;border-radius:25px;
+      font-weight:700;font-size:.82rem;cursor:pointer;
+      display:none;align-items:center;gap:6px;
+      box-shadow:0 4px 14px rgba(34,197,94,.4);
+      transition:all .25s;margin-left:6px;
+      animation:installPulse 2s ease-in-out infinite;
+    }
+    #pwaInstallBtn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(34,197,94,.55);}
+    #pwaInstallBtn.show{display:inline-flex;}
+    @keyframes installPulse{
+      0%,100%{box-shadow:0 4px 14px rgba(34,197,94,.4);}
+      50%{box-shadow:0 4px 22px rgba(34,197,94,.7);}
+    }
 
-/* ── Toast ───────────────────────────────────────────────────────────── */
-#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,140%);z-index:100;
-  background:linear-gradient(135deg,#1f3b4c,#2c5f8a);color:#fff;padding:11px 20px;border-radius:30px;font-weight:600;font-size:.82rem;
-  box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px);
-  transition:transform .3s cubic-bezier(.4,0,.2,1)}
-#toast.show{transform:translate(-50%,0)}
-#toast button{background:#22c55e;color:#fff;border:none;padding:6px 14px;border-radius:20px;font-weight:700;font-size:.76rem;cursor:pointer;display:none}
+    /* iOS install banner */
+    #iosInstallBanner{
+      position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(140%);
+      width:calc(100% - 32px);max-width:440px;z-index:99999;
+      background:linear-gradient(135deg,#1f3b4c,#2c5f8a);
+      border-radius:22px;padding:18px 20px;
+      box-shadow:0 20px 50px rgba(0,0,0,.45);
+      color:white;display:none;
+      border:1px solid rgba(255,255,255,.15);
+      transition:transform .4s cubic-bezier(.4,0,.2,1);
+    }
+    #iosInstallBanner.show{display:block;transform:translateX(-50%) translateY(0);}
+    #iosInstallBanner .ios-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+    #iosInstallBanner .ios-icon{font-size:1.8rem;flex-shrink:0;}
+    #iosInstallBanner .ios-title{font-weight:800;font-size:.95rem;}
+    #iosInstallBanner .ios-sub{font-size:.72rem;opacity:.65;margin-top:2px;}
+    #iosInstallBanner .ios-steps{
+      font-size:.78rem;line-height:1.6;opacity:.85;
+      background:rgba(255,255,255,.08);padding:10px 14px;border-radius:12px;
+      margin-bottom:12px;
+    }
+    #iosInstallBanner .ios-steps strong{color:#4ade80;}
+    #iosInstallBanner .ios-actions{display:flex;gap:8px;justify-content:flex-end;}
+    #iosInstallBanner button{
+      border:none;padding:8px 18px;border-radius:20px;font-weight:700;
+      font-size:.78rem;cursor:pointer;transition:.2s;
+    }
+    #iosInstallBanner .ios-dismiss{background:rgba(255,255,255,.12);color:white;}
+    #iosInstallBanner .ios-ok{background:#22c55e;color:white;}
+    #iosInstallBanner .ios-close{
+      position:absolute;top:12px;right:14px;background:transparent;color:rgba(255,255,255,.5);
+      font-size:1.1rem;padding:4px 8px;border-radius:50%;
+    }
 
-/* ── iOS install helper banner ───────────────────────────────────────── */
-#iosBanner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(140%);width:calc(100% - 32px);max-width:440px;z-index:99999;
-  background:linear-gradient(135deg,#1f3b4c,#2c5f8a);border-radius:22px;padding:18px 20px;box-shadow:0 20px 50px rgba(0,0,0,.45);
-  color:#fff;display:none;border:1px solid rgba(255,255,255,.15);transition:transform .4s cubic-bezier(.4,0,.2,1)}
-#iosBanner.show{display:block;transform:translateX(-50%) translateY(0)}
-#iosBanner .head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-#iosBanner .ic{font-size:1.8rem}
-#iosBanner .tt{font-weight:800;font-size:.95rem}
-#iosBanner .ss{font-size:.72rem;opacity:.65;margin-top:2px}
-#iosBanner .steps{font-size:.78rem;line-height:1.6;opacity:.9;background:rgba(255,255,255,.08);padding:10px 14px;border-radius:12px;margin-bottom:12px}
-#iosBanner .steps strong{color:#4ade80}
-#iosBanner .act{display:flex;gap:8px;justify-content:flex-end}
-#iosBanner button{border:none;padding:8px 18px;border-radius:20px;font-weight:700;font-size:.78rem;cursor:pointer}
-#iosBanner .later{background:rgba(255,255,255,.12);color:#fff}
-#iosBanner .ok{background:#22c55e;color:#fff}
-</style>
+    /* Offline toast */
+    #offlineToast{
+      position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-140%);
+      background:#dc2626;color:white;padding:10px 22px;border-radius:30px;
+      font-weight:700;font-size:.82rem;z-index:99998;
+      box-shadow:0 8px 24px rgba(220,38,38,.45);
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+      display:flex;align-items:center;gap:8px;
+    }
+    #offlineToast.show{transform:translateX(-50%) translateY(0);}
+    #offlineToast.online{background:#16a34a;box-shadow:0 8px 24px rgba(22,163,74,.45);}
+
+    /* Update toast */
+    #updateToast{
+      position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(140%);
+      background:linear-gradient(135deg,#1f3b4c,#2c5f8a);color:white;
+      padding:12px 22px;border-radius:30px;font-weight:600;font-size:.82rem;
+      z-index:99997;box-shadow:0 8px 24px rgba(0,0,0,.4);
+      display:none;align-items:center;gap:12px;
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    #updateToast.show{display:flex;transform:translateX(-50%) translateY(0);}
+    #updateToast button{
+      background:#22c55e;color:white;border:none;padding:6px 16px;
+      border-radius:20px;font-weight:700;font-size:.78rem;cursor:pointer;
+    }
+  </style>
 </head>
 <body>
 
-<div id="frameWrap">
-  <iframe id="appFrame" title="SPG Labs" allow="clipboard-read; clipboard-write; fullscreen" referrerpolicy="origin"></iframe>
+<!-- SERVER URL SETUP (first launch only) -->
+<div id="gasSetup" style="display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:20px;background:linear-gradient(145deg,#0f2b3d,#1b2f44);">
+  <div style="background:#fff;border-radius:28px;padding:30px 26px;width:100%;max-width:440px;box-shadow:0 40px 80px rgba(0,0,0,.45);">
+    <h2 style="color:#1f3b4c;font-size:1.15rem;margin-bottom:6px;">🔬 SPG Labs — first-time setup</h2>
+    <p style="color:#667;font-size:.82rem;line-height:1.55;margin-bottom:14px;">Apps Script ka <b>Web app URL</b> paste karo (Deploy → Manage deployments, <b>/exec</b> par khatam hota hai). Ye sirf is device par save hota hai.</p>
+    <input id="gasUrlInput" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
+    <div id="gasUrlErr" style="display:none;color:#b91c1c;font-size:.78rem;font-weight:600;margin-top:8px;"></div>
+    <button class="login-btn" style="margin-top:14px;" onclick="saveGasUrl()">Save &amp; Open App</button>
+  </div>
 </div>
-
-<div id="splash">
-  <img src="icons/icon-192.png" alt="SPG Labs">
-  <div class="t">SPG Labs</div>
-  <div class="spin"></div>
-  <div class="s">Loading Complete Medical Suite…</div>
-</div>
-
-<div id="setup">
-  <div class="card">
-    <h2>🔬 SPG Labs — first-time setup</h2>
-    <p>Paste your Google Apps Script <b>Web app URL</b> (Deploy → Manage deployments → Web app URL, ends with <b>/exec</b>). It is saved on this device only.</p>
-    <input id="setupUrl" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
-    <div id="setupErr"></div>
-    <button id="setupSave">Save &amp; Open App</button>
+  <!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo"><h1>🔬 SPG Labs</h1><p>Complete Medical Management Suite</p></div>
+    <div id="loginError" class="login-error"></div>
+    <div id="loginWarning" class="login-warning"></div>
+    <div class="login-field"><label>📧 Email Address</label><input type="email" id="loginEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="login-field"><label>🔒 Password</label><input type="password" id="loginPassword" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">🔑 Sign In</button>
+    <button type="button" id="loginInstallBtn" onclick="triggerInstall()" style="display:none;width:100%;margin-top:12px;padding:11px;border:none;border-radius:30px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-weight:700;font-size:.88rem;cursor:pointer;">⬇️ Install App</button>
+    <div class="login-role-badge">🔐 Secure · Role-based · Login attempts monitored</div>
   </div>
 </div>
 
-<iframe id="offlineFrame" title="Offline"></iframe>
-
-<button id="installFallback" type="button">⬇️ Install App</button>
-
-<div id="toast"><span id="toastText"></span><button id="toastAction" type="button"></button></div>
-
-<div id="iosBanner">
-  <div class="head">
-    <span class="ic">📲</span>
-    <div><div class="tt">Install SPG Labs</div><div class="ss">Get the full app experience</div></div>
+<!-- MAIN APP -->
+<div id="mainApp" style="display:none;">
+<div class="container">
+  <div id="userTopBar">
+    <div class="user-info-bar">
+      <div class="user-avatar" id="userAvatarBar">?</div>
+      <div><div class="user-name-bar" id="userNameBar">User</div><span class="role-pill" id="userRolePill">User</span></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-info btn-sm" onclick="refreshAll()">🔄 Refresh</button>
+      <button id="pwaInstallBtn" onclick="triggerInstall()"><span>⬇️</span> Install App</button>
+      <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
+    </div>
   </div>
-  <div class="steps">Tap <strong>Share</strong> ⎋ at the bottom of Safari, then choose <strong>Add to Home Screen</strong> ➕</div>
-  <div class="act">
-    <button class="later" id="iosLater" type="button">Later</button>
-    <button class="ok" id="iosOk" type="button">Got it</button>
+  <div class="header">
+    <h1>🔬 SPG Labs · Complete Medical Suite</h1>
+    <p style="color:#2c5f8a;">Multi-test selection · Real-time insights · Doctor analytics · Secured</p>
+  </div>
+  <div class="tabs" id="tabBar">
+    <button class="tab-btn active" onclick="switchTab('add')" id="tabAdd">➕ New Record</button>
+    <button class="tab-btn" onclick="switchTab('view')" id="tabView" style="display:none;">📋 Records</button>
+    <button class="tab-btn" onclick="switchTab('doctors')" id="tabDoctors" style="display:none;">👨‍⚕️ Doctor Stats</button>
+    <button class="tab-btn" onclick="switchTab('bookings')" id="tabBookings" style="display:none;">📅 Bookings</button>
+    <button class="tab-btn" onclick="switchTab('users')" id="tabUsers" style="display:none;">👥 Users</button>
+    <button class="tab-btn" onclick="switchTab('audit')" id="tabAudit" style="display:none;">🔐 Audit Log</button>
+    <button class="tab-btn" onclick="switchTab('report')" id="tabReport">🧪 Lab Report</button>
+  </div>
+
+  <!-- ADD RECORD -->
+  <div id="addTab" class="tab-content">
+    <div class="form-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;">
+        <h2 style="color:#1f3b4c;border-left:6px solid #2c7a4d;padding-left:16px;">📝 Register Lab Visit</h2>
+      </div>
+      <div class="three-col-layout">
+        <div>
+          <div class="section-subtitle">👤 Patient Details</div>
+          <div class="form-group"><label class="required">📅 Date of Visit</label><input type="date" id="dateOfVisit"></div>
+          <div class="form-group"><label class="required">👤 Patient Name</label><input type="text" id="customerName" placeholder="Full name"></div>
+          <div class="form-group"><label class="required">📞 Phone Number</label><input type="tel" id="phoneNumber" placeholder="10-digit mobile"></div>
+          <div class="form-group"><label>🎂 Age</label><input type="number" id="age" placeholder="Age"></div>
+          <div class="section-subtitle" style="margin-top:10px;">👨‍⚕️ Referring Doctor</div>
+          <div class="form-group">
+            <label class="required">Doctor Name</label>
+            <select id="doctorNameSelect"><option value="">-- Select Referring Doctor --</option></select>
+            <div id="addDoctorPanel" style="display:none;margin-top:12px;padding:15px;background:#f0f7f3;border-radius:16px;border:1px solid #c8e6c9;">
+              <input type="text" id="newDoctorName" placeholder="Enter new doctor name" style="width:100%;margin-bottom:12px;">
+              <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <button type="button" class="btn btn-success btn-sm" onclick="saveNewDoctor()">✓ Save</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="cancelAddDoctor()">Cancel</button>
+              </div>
+            </div>
+          </div>
+          <div class="section-subtitle" style="margin-top:10px;">🔖 Reference</div>
+          <div class="form-group"><label>Appointment Ref No</label><input type="text" id="appointmentRefNo" placeholder="Reference number"></div>
+        </div>
+        <div>
+          <div class="section-subtitle">🧪 Tests Conducted</div>
+          <div class="test-select-area">
+            <input type="text" id="testSearchInput" class="test-search" placeholder="🔍 Search tests..." oninput="filterTests()">
+            <div id="addTestOptionBtn" class="add-test-option" onclick="showAddTestPanel()">➕ + Add New Test</div>
+            <div id="addTestPanel" style="display:none;margin-top:10px;padding:12px;background:#fff8e1;border-radius:16px;border:2px solid #ffc107;">
+              <div style="font-weight:bold;margin-bottom:10px;color:#e65100;">📝 Add Custom Test</div>
+              <input type="text" id="newTestName" placeholder="Test name" style="width:100%;margin-bottom:8px;">
+              <input type="number" id="newTestPrice" placeholder="Price (₹)" style="width:100%;margin-bottom:12px;">
+              <select id="newTestCategory" style="width:100%;margin-bottom:12px;">
+                <option value="🔬 CUSTOM TESTS">🔬 CUSTOM TESTS</option>
+                <option value="🩸 HAEMATOLOGY">🩸 HAEMATOLOGY</option>
+                <option value="🧪 BIOCHEMISTRY">🧪 BIOCHEMISTRY</option>
+                <option value="🧫 SEROLOGY">🧫 SEROLOGY</option>
+                <option value="🔬 SPECIAL TEST">🔬 SPECIAL TEST</option>
+              </select>
+              <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button class="btn btn-success btn-sm" onclick="saveNewTest()">✓ Save</button>
+                <button class="btn btn-secondary btn-sm" onclick="cancelAddTest()">Cancel</button>
+              </div>
+            </div>
+            <div id="testCategoriesContainer" class="test-categories"></div>
+          </div>
+          <div class="selected-tests-area">
+            <strong>📋 Selected Tests:</strong>
+            <div id="selectedTestsList" style="margin-top:6px;"></div>
+            <div class="total-fee-box"><strong>💰 Total: ₹<span id="totalTestFeeDisplay">0.00</span></strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="section-subtitle">💰 Financial Summary</div>
+          <div class="finance-highlight">
+            <div class="form-group"><label>Payment Received (₹)</label><input type="number" id="payment" step="1" placeholder="0" oninput="calculateAmounts()"></div>
+            <div class="form-group"><label>Amount Due (₹)</label><input type="text" id="amountDue" class="calculated-field" readonly></div>
+            <div class="form-group"><label>Doctor Commission (%)</label><input type="number" id="doctorCommissionPercent" step="0.1" placeholder="0" oninput="calculateAmounts()"></div>
+            <div class="form-group"><label>Doctor Commission (₹)</label><input type="text" id="doctorCommission" class="calculated-field" readonly></div>
+            <div class="form-group"><label>📊 NET REVENUE (₹)</label><input type="text" id="totalRevenueField" class="calculated-field" readonly></div>
+            <div class="form-group"><label>💳 Payment Method</label><select id="paymentMethod"><option value="">Select</option><option>Cash</option><option>Card</option><option>UPI</option><option>Insurance</option></select></div>
+            <div class="form-group"><label>📌 Status</label><select id="status"><option value="Pending">Pending</option><option value="Completed">Completed</option><option value="Cancelled">Cancelled</option></select></div>
+          </div>
+        </div>
+      </div>
+      <div class="notes-wrapper"><div class="form-group"><label>📝 Notes</label><textarea id="notes" rows="3" placeholder="Any remarks..."></textarea></div></div>
+      <div class="action-buttons">
+        <button class="btn btn-primary" id="mainBtn" onclick="saveRecord()">💾 Save Record</button>
+        <button class="btn btn-danger" id="cancelBtn" onclick="cancelEdit()" style="display:none;">❌ Cancel Edit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECORDS -->
+  <div id="viewTab" class="tab-content" style="display:none;">
+    <div class="form-box">
+      <div id="summaryRow" style="display:none;margin-bottom:22px;">
+        <div style="font-size:.72rem;font-weight:800;color:#8898aa;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #f0f4f8;">📊 Dashboard Summary</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;">
+          <div class="kpi-card" style="--kc:#2563eb;"><div class="kpi-icon">📋</div><div class="kpi-val" id="summaryTotal">0</div><div class="kpi-label">Total Records</div></div>
+          <div class="kpi-card" style="--kc:#059669;"><div class="kpi-icon">💰</div><div class="kpi-val" id="summaryFees">₹0</div><div class="kpi-label">Total Fees</div></div>
+          <div class="kpi-card" style="--kc:#0891b2;"><div class="kpi-icon">💵</div><div class="kpi-val" id="summaryPaid">₹0</div><div class="kpi-label">Total Paid</div></div>
+          <div class="kpi-card" style="--kc:#dc2626;"><div class="kpi-icon">⚠️</div><div class="kpi-val" id="summaryDue">₹0</div><div class="kpi-label">Total Due</div></div>
+          <div class="kpi-card" style="--kc:#16a34a;"><div class="kpi-icon">📈</div><div class="kpi-val" id="summaryRevenue">₹0</div><div class="kpi-label">Net Revenue</div></div>
+          <div class="kpi-card admin-kpi" style="--kc:#d97706;display:none;"><div class="kpi-icon">💸</div><div class="kpi-val" id="adminCommission">₹0</div><div class="kpi-label">Commission</div></div>
+          <div class="kpi-card admin-kpi" style="--kc:#7c3aed;display:none;"><div class="kpi-icon">📅</div><div class="kpi-val" id="adminMonthCount">0</div><div class="kpi-label" id="adminMonthName">This Month</div></div>
+          <div class="kpi-card admin-kpi" style="--kc:#0f766e;display:none;"><div class="kpi-icon">🌅</div><div class="kpi-val" id="adminTodayCount">0</div><div class="kpi-label">Today</div></div>
+        </div>
+      </div>
+      <div id="batchBar" class="batch-bar hidden"><div><span id="selectedCount">0</span> selected</div><div><button class="btn btn-danger btn-sm" onclick="batchDelete()">🗑️ Delete Selected</button><button class="btn btn-secondary btn-sm" onclick="clearSelection()">Clear</button></div></div>
+      <div class="search-section">
+        <div class="search-row">
+          <div class="search-input-wrapper"><input type="text" id="searchInput" placeholder="🔍 Search by name, phone, serial, doctor, test..." oninput="handleSearchInput()"></div>
+          <button class="btn btn-primary" onclick="applySearch()">Search</button>
+          <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
+          <div class="records-per-page"><span style="font-size:.75rem;">Show:</span><select id="rowsPerPageSelect" onchange="changeRowsPerPage()"><option value="25">25</option><option value="50">50</option><option value="100" selected>100</option><option value="200">200</option><option value="500">500</option></select></div>
+        </div>
+        <div class="filter-chips" id="filterChipsContainer"></div>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead><tr><th style="width:35px;"><input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()"></th><th>Sl No</th><th>Date</th><th>Patient</th><th>Phone</th><th>Tests</th><th>Fee</th><th>Paid</th><th>Due</th><th>Net Rev</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="recordsBody"><tr><td colspan="12" style="text-align:center;padding:40px;">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+
+  <!-- DOCTOR STATS -->
+  <div id="doctorsTab" class="tab-content" style="display:none;">
+    <div class="form-box" style="padding:0;overflow:hidden;">
+      <div style="background:linear-gradient(135deg,#1f3b4c,#2c5f8a 60%,#1e7e5a);padding:28px 32px 22px;border-radius:32px 32px 0 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div><div style="font-size:1.5rem;font-weight:900;color:#fff;">👨‍⚕️ Doctor Performance</div><div style="font-size:.78rem;color:rgba(255,255,255,.55);margin-top:4px;">Revenue & commission analytics per referring doctor</div></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-sm admin-only-btn" id="manageDoctorsBtn" onclick="openManageDoctorsModal()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);display:none;">⚙️ Manage Doctors</button>
+            <button class="btn btn-sm" onclick="refreshDoctorStats()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);">🔄 Refresh</button>
+          </div>
+        </div>
+      </div>
+      <div style="padding:24px 32px 32px;"><div id="doctorStatsContainer" class="doctor-stats-grid"><div class="empty-state">Loading...</div></div></div>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div id="usersTab" class="tab-content" style="display:none;">
+    <div class="form-box">
+      <h2 style="color:#1f3b4c;border-left:6px solid #2c7a4d;padding-left:16px;margin-bottom:24px;">👥 User Management</h2>
+      <div id="adminUserPanel">
+        <div class="add-user-form">
+          <h3>➕ Add New User</h3>
+          <div class="user-form-grid">
+            <div class="form-group"><label class="required">Full Name</label><input type="text" id="newUserName" placeholder="e.g. Dr. Ramesh Kumar"></div>
+            <div class="form-group"><label class="required">Email Address</label><input type="email" id="newUserEmail" placeholder="user@example.com"></div>
+            <div class="form-group"><label class="required">Password</label><input type="password" id="newUserPassword" placeholder="Min 6 characters" oninput="checkPasswordStrength(this.value)"><div class="pw-strength" id="pwStrengthBar"></div></div>
+            <div class="form-group"><label class="required">Role</label><select id="newUserRole"></select></div>
+          </div>
+          <div id="newUserTabPermsRow" style="display:none;margin-top:14px;padding:14px;background:#f0f4f8;border-radius:16px;">
+            <div style="font-size:.75rem;font-weight:800;color:#1f3b4c;margin-bottom:10px;">🔐 Tab Access (leave unchecked = no access)</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;">
+              <label style="display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="newUserCanViewRecords" style="width:15px;height:15px;"> 📋 Records Tab</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="newUserCanViewDoctorStats" style="width:15px;height:15px;"> 👨‍⚕️ Doctor Stats Tab</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="newUserCanViewUsers" style="width:15px;height:15px;"> 👥 Users Tab</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="newUserCanViewBookings" style="width:15px;height:15px;"> 📅 Bookings Tab</label>
+            </div>
+            <div style="font-size:.75rem;font-weight:800;color:#1f3b4c;margin:12px 0 10px;">✍️ Action Permissions</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;">
+              <label style="display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="newUserCanAddDoctor" style="width:15px;height:15px;"> Can Add Doctors</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="newUserCanAddTest" style="width:15px;height:15px;"> Can Add Tests</label>
+            </div>
+          </div>
+          <div style="text-align:right;margin-top:16px;"><button class="btn btn-primary" onclick="addNewUser()">💾 Create User</button></div>
+        </div>
+        <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+          <strong style="color:#1f3b4c;">👤 Registered Users</strong>
+          <button class="btn btn-info btn-sm" onclick="loadUsers()">🔄 Refresh</button>
+        </div>
+        <div class="table-container">
+          <table class="users-table">
+            <thead><tr><th>Full Name</th><th>Email</th><th>Role</th><th id="permColHeader">Permissions</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+            <tbody id="usersTableBody"><tr><td colspan="7" style="text-align:center;padding:30px;color:#888;">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKINGS TAB -->
+  <div id="bookingsTab" class="tab-content" style="display:none;">
+    <div class="form-box" style="padding:0;overflow:hidden;">
+      <div style="background:linear-gradient(135deg,#0f766e,#0891b2);padding:24px 28px 20px;border-radius:32px 32px 0 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div style="font-size:1.4rem;font-weight:900;color:#fff;">📅 Bookings Dashboard</div>
+            <div id="bookingsLastUpdated" style="font-size:.75rem;color:rgba(255,255,255,.6);margin-top:3px;">—</div>
+          </div>
+          <button class="btn btn-sm" onclick="loadBookings()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);">🔄 Refresh</button>
+        </div>
+      </div>
+      <div style="padding:24px 28px 32px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;">
+          <div class="kpi-card" style="--kc:#0891b2;"><div class="kpi-icon">📋</div><div class="kpi-val" id="bkTotal">—</div><div class="kpi-label">Total Bookings</div></div>
+          <div class="kpi-card" style="--kc:#0f766e;"><div class="kpi-icon">✅</div><div class="kpi-val" id="bkConfirmed">—</div><div class="kpi-label">Confirmed</div></div>
+          <div class="kpi-card" style="--kc:#7c3aed;"><div class="kpi-icon">🌅</div><div class="kpi-val" id="bkToday">—</div><div class="kpi-label">Today's Appts</div></div>
+          <div class="kpi-card" style="--kc:#059669;"><div class="kpi-icon">💰</div><div class="kpi-val" id="bkAmount">—</div><div class="kpi-label">Total Amount</div></div>
+        </div>
+        <div style="margin-bottom:18px;">
+          <input type="text" id="bookingSearch" placeholder="🔍 Search by name, phone, test, booking ID..." oninput="filterBookings()" style="border-radius:25px;border:2px solid #e2edf2;padding:10px 18px;font-size:.88rem;width:100%;">
+        </div>
+        <div style="display:grid;grid-template-columns:1.8fr 1fr;gap:20px;align-items:start;">
+          <div>
+            <div style="font-size:.72rem;font-weight:800;color:#8898aa;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">📋 All Bookings</div>
+            <div class="table-container" style="max-height:500px;border-radius:16px;">
+              <table class="data-table" style="font-size:.73rem;">
+                <thead>
+                  <tr>
+                    <th>Token</th><th>Patient</th><th>Phone</th>
+                    <th>Tests</th><th>Amount</th><th>Appt Date</th><th>Time</th><th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="bookingsTableBody">
+                  <tr><td colspan="8" style="text-align:center;padding:30px;color:#888;">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:.72rem;font-weight:800;color:#8898aa;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">🧪 Test Popularity</div>
+            <div id="bookingTestBreakdown" style="background:#f8fafc;border-radius:16px;overflow:hidden;border:1px solid #eef2f7;max-height:500px;overflow-y:auto;">
+              <div style="text-align:center;padding:30px;color:#888;">Loading...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIT LOG -->
+  <div id="auditTab" class="tab-content" style="display:none;">
+    <div class="form-box" style="padding:0;overflow:hidden;">
+      <div class="security-banner"><h2>🔐 Security Audit Log</h2><p>All logins, record changes and user management events · Owner eyes only</p></div>
+      <div style="padding:20px 28px 28px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <div style="font-size:.8rem;color:#6c757d;">Showing last 300 events, newest first</div>
+          <button class="btn btn-info btn-sm" onclick="loadAuditLog()">🔄 Refresh</button>
+        </div>
+        <div class="table-container" style="max-height:700px;">
+          <table class="audit-table">
+            <thead><tr><th>Timestamp</th><th>User</th><th>Role</th><th>Action</th><th>Target</th><th>Details</th></tr></thead>
+            <tbody id="auditBody"><tr><td colspan="6" style="text-align:center;padding:40px;color:#888;">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LAB REPORT TAB ─────────────────────────────────────────────────── -->
+  <div id="reportTab" class="tab-content" style="display:none;">
+    <div style="border-radius:32px;overflow:hidden;box-shadow:0 24px 45px -15px rgba(0,0,0,.25);">
+      <div id="rptTopBar" style="background:linear-gradient(135deg,#1f3b4c,#2c5f8a);padding:14px 22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div style="color:white;font-weight:800;font-size:.95rem;flex:1;">🧪 Lab Report Builder
+          <small style="font-size:.72rem;font-weight:400;opacity:.65;display:block;">Select tests · Fill results · Print A4 report on pre-printed letterhead</small>
+        </div>
+        <button onclick="rptAddTest()" style="background:#3b82f6;color:white;border:none;padding:7px 16px;border-radius:20px;font-weight:700;cursor:pointer;font-size:.8rem;">➕ Add Test</button>
+        <button onclick="rptClearAll()" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);padding:7px 16px;border-radius:20px;font-weight:700;cursor:pointer;font-size:.8rem;">🗑️ Clear</button>
+        <button onclick="rptDoPrint()" style="background:#28a745;color:white;border:none;padding:7px 16px;border-radius:20px;font-weight:700;cursor:pointer;font-size:.8rem;">🖨️ Print / PDF</button>
+      </div>
+      <div style="display:flex;height:calc(100vh - 230px);min-height:580px;">
+        <div id="rptSidebar" style="width:350px;flex-shrink:0;background:white;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;border-right:2px solid #e2edf2;">
+          <div style="font-size:.7rem;font-weight:800;color:#1f3b4c;text-transform:uppercase;letter-spacing:.8px;padding-bottom:7px;border-bottom:2px solid #e2edf2;">👤 Patient Details</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <label style="font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;">Patient Name</label>
+            <input id="rpt_name" style="padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;" placeholder="Full Name" oninput="rptUpdatePreview()">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <label style="font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;">Age</label>
+              <input id="rpt_age" style="padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;" placeholder="Years" oninput="rptUpdatePreview()">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <label style="font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;">Gender</label>
+              <select id="rpt_gender" style="padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;" onchange="rptUpdatePreview()">
+                <option value="">Select</option><option>Male</option><option>Female</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <label style="font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;">SL / Lab No.</label>
+              <input id="rpt_serial" style="padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;" placeholder="SPG-001" oninput="rptUpdatePreview()">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <label style="font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;">Date</label>
+              <input id="rpt_date" type="date" style="padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;" oninput="rptUpdatePreview()">
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <label style="font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;">Ref. Doctor</label>
+            <input id="rpt_doctor" style="padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;" placeholder="Dr. Name" oninput="rptUpdatePreview()">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <label style="font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;">Sample Type</label>
+            <input id="rpt_sample" style="padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;" placeholder="Blood / Urine" oninput="rptUpdatePreview()">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <label style="font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;">Notes</label>
+            <input id="rpt_notes" style="padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;" placeholder="Any remarks..." oninput="rptUpdatePreview()">
+          </div>
+          <div style="font-size:.7rem;font-weight:800;color:#1f3b4c;text-transform:uppercase;letter-spacing:.8px;padding-bottom:7px;border-bottom:2px solid #e2edf2;margin-top:4px;">📋 Tests &amp; Results</div>
+          <div id="rptTestCards"></div>
+          <div onclick="rptAddTest()" style="width:100%;padding:9px;background:#e8f5e9;color:#2c7a4d;border:1.5px dashed #2c7a4d;border-radius:12px;font-weight:700;font-size:.82rem;cursor:pointer;text-align:center;">➕ Add Test Row</div>
+          <button onclick="rptUpdatePreview()" style="width:100%;padding:10px;background:#2c7a4d;color:white;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-size:.85rem;">🔄 Update Preview</button>
+          <p style="font-size:.62rem;color:#aaa;text-align:center;">Select from dropdown → Unit &amp; Range auto-fill</p>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:20px;display:flex;justify-content:center;align-items:flex-start;background:#d0d0d0;">
+          <div id="rptA4" style="width:210mm;min-height:297mm;background:white;box-shadow:0 4px 32px rgba(0,0,0,.25);font-family:'Times New Roman',Times,serif;color:#111;">
+            <div style="height:74.25mm;background:white;position:relative;">
+              <div style="position:absolute;bottom:2mm;left:0;right:0;text-align:center;font-size:6pt;color:#cccccc;font-family:Arial,sans-serif;letter-spacing:.5px;">
+                ▲ PRE-PRINTED LETTERHEAD AREA — KEEP BLANK ▲
+              </div>
+            </div>
+            <div style="border:none;border-top:2px solid #000;margin:0 16mm;"></div>
+            <div style="padding:3mm 16mm 12mm;">
+              <div id="rv_title" style="text-align:center;font-size:13pt;font-weight:bold;text-decoration:underline;text-transform:uppercase;margin:4mm 0 3mm;">PATHOLOGY INVESTIGATION REPORT</div>
+              <div style="display:table;width:100%;margin-bottom:3mm;">
+                <div style="display:table-cell;width:50%;vertical-align:top;padding-right:4mm;">
+                  <div style="display:flex;border-bottom:1px dotted #bbb;padding:1.8mm 0;"><span style="font-weight:bold;width:85pt;font-size:8.5pt;flex-shrink:0;">SL. No. :</span><span style="font-size:9pt;" id="rv_serial"></span></div>
+                  <div style="display:flex;border-bottom:1px dotted #bbb;padding:1.8mm 0;"><span style="font-weight:bold;width:85pt;font-size:8.5pt;flex-shrink:0;">Name :</span><span style="font-size:9pt;" id="rv_name"></span></div>
+                  <div style="display:flex;border-bottom:1px dotted #bbb;padding:1.8mm 0;"><span style="font-weight:bold;width:85pt;font-size:8.5pt;flex-shrink:0;">Age / Gender :</span><span style="font-size:9pt;" id="rv_age_gender"></span></div>
+                </div>
+                <div style="display:table-cell;width:50%;vertical-align:top;">
+                  <div style="display:flex;border-bottom:1px dotted #bbb;padding:1.8mm 0;"><span style="font-weight:bold;width:85pt;font-size:8.5pt;flex-shrink:0;">Date :</span><span style="font-size:9pt;" id="rv_date"></span></div>
+                  <div style="display:flex;border-bottom:1px dotted #bbb;padding:1.8mm 0;"><span style="font-weight:bold;width:85pt;font-size:8.5pt;flex-shrink:0;">Ref. Doctor :</span><span style="font-size:9pt;" id="rv_doctor"></span></div>
+                  <div style="display:flex;border-bottom:1px dotted #bbb;padding:1.8mm 0;"><span style="font-weight:bold;width:85pt;font-size:8.5pt;flex-shrink:0;">Sample :</span><span style="font-size:9pt;" id="rv_sample"></span></div>
+                </div>
+              </div>
+              <div style="border:none;border-top:1px solid #000;margin:2.5mm 0;"></div>
+              <table id="rv_table" style="width:100%;border-collapse:collapse;">
+                <thead><tr style="background:#111;color:#fff;">
+                  <th style="padding:6px 8px;font-size:8.5pt;font-weight:bold;text-align:left;width:36%;">TEST NAME</th>
+                  <th style="padding:6px 8px;font-size:8.5pt;font-weight:bold;text-align:center;width:16%;">RESULT</th>
+                  <th style="padding:6px 8px;font-size:8.5pt;font-weight:bold;text-align:center;width:14%;">UNITS</th>
+                  <th style="padding:6px 8px;font-size:8.5pt;font-weight:bold;text-align:center;width:24%;">NORMAL VALUE</th>
+                  <th style="padding:6px 8px;font-size:8.5pt;font-weight:bold;text-align:center;width:10%;">REMARK</th>
+                </tr></thead>
+                <tbody id="rv_tbody"></tbody>
+              </table>
+              <div id="rv_notes" style="display:none;margin-top:3mm;font-size:8.5pt;font-style:italic;"></div>
+              <p style="font-size:7.5pt;color:#666;font-style:italic;margin-top:3mm;">* Reference ranges may vary. Results should be clinically correlated. Valid only for the specimen collected.</p>
+              <div style="border:none;border-top:1px solid #000;margin:5mm 0 2mm;"></div>
+              <p style="text-align:center;font-size:7pt;color:#888;font-style:italic;">--- End of Report --- | Computer-generated report</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+</div><!-- /mainApp -->
+
+<!-- MODALS -->
+<div id="confirmModal" class="modal"><div class="modal-content"><h3>⚠️ Confirm Action</h3><p id="confirmMessage" style="margin:15px 0;color:#555;"></p><div style="display:flex;gap:12px;justify-content:center;margin-top:20px;"><button class="btn btn-danger" onclick="confirmAction()">✓ Confirm</button><button class="btn btn-secondary" onclick="closeModal()">Cancel</button></div></div></div>
+<div id="manageDoctorsModal" class="modal"><div class="modal-content"><h3>👨‍⚕️ Manage Doctors</h3><div id="doctorsListManage" style="max-height:300px;overflow-y:auto;margin:15px 0;text-align:left;"></div><div class="form-group" style="text-align:left;"><label style="font-weight:600;font-size:.85rem;">Add New Doctor:</label><input type="text" id="newDoctorNameManage" placeholder="New doctor name" style="margin-top:6px;"><button class="btn btn-success btn-sm" style="margin-top:8px;width:100%;" onclick="addNewDoctorFromManage()">➕ Add Doctor</button></div><button class="btn btn-secondary" style="margin-top:10px;" onclick="closeManageDoctorsModal()">Close</button></div></div>
+<div id="manageTestsModal" class="modal"><div class="modal-content"><h3>🧪 Manage Custom Tests</h3><div id="testsListManage" style="max-height:350px;overflow-y:auto;margin:15px 0;text-align:left;"></div><button class="btn btn-secondary" onclick="closeManageTestsModal()">Close</button></div></div>
+<div id="deleteDoctorModal" class="modal"><div class="modal-content"><h3>🗑️ Remove Doctor</h3><p id="deleteDoctorMessage" style="margin:15px 0;color:#555;"></p><p style="font-size:.8rem;color:#888;">Won't delete existing patient records.</p><div style="display:flex;gap:12px;justify-content:center;margin-top:20px;"><button class="btn btn-danger" onclick="confirmDeleteDoctor()">✓ Remove</button><button class="btn btn-secondary" onclick="closeDeleteDoctorModal()">Cancel</button></div></div></div>
+<div id="changePasswordModal" class="modal"><div class="modal-content"><h3>🔑 Change Password</h3><p id="changePwTarget" style="color:#888;font-size:.8rem;margin-bottom:16px;"></p><div class="form-group" style="text-align:left;"><label style="font-weight:700;font-size:.8rem;color:#1f3b4c;">New Password</label><input type="password" id="newPasswordField" placeholder="Min 6 characters"></div><div class="form-group" style="text-align:left;"><label style="font-weight:700;font-size:.8rem;color:#1f3b4c;">Confirm Password</label><input type="password" id="confirmPasswordField"></div><div style="display:flex;gap:12px;justify-content:center;margin-top:20px;"><button class="btn btn-primary" onclick="confirmChangePassword()">✓ Save</button><button class="btn btn-secondary" onclick="closeChangePasswordModal()">Cancel</button></div></div></div>
+<div id="permModal" class="modal"><div class="modal-content" style="max-width:560px;">
+  <h3>🔐 Edit Permissions</h3>
+  <p id="permModalTarget" style="color:#888;font-size:.8rem;margin-bottom:16px;"></p>
+  <div id="permModalBody" style="text-align:left;"></div>
+  <button class="btn btn-secondary" style="margin-top:16px;" onclick="closePermModal()">Close</button>
+</div></div>
+
+<!-- PWA UI ELEMENTS -->
+<div id="offlineToast"><span>📡</span><span id="offlineToastText">You're offline</span></div>
+
+<div id="updateToast">
+  <span>🚀</span>
+  <span>New version available!</span>
+  <button onclick="applyPwaUpdate()">Update</button>
+</div>
+
+<div id="iosInstallBanner">
+  <button class="ios-close" onclick="dismissIosBanner()">✕</button>
+  <div class="ios-head">
+    <span class="ios-icon">📲</span>
+    <div>
+      <div class="ios-title">Install SPG Labs</div>
+      <div class="ios-sub">Get the full app experience</div>
+    </div>
+  </div>
+  <div class="ios-steps">
+    Tap <strong>Share</strong> ⎋ at the bottom of Safari, then choose <strong>Add to Home Screen</strong> ➕
+  </div>
+  <div class="ios-actions">
+    <button class="ios-dismiss" onclick="dismissIosBanner()">Later</button>
+    <button class="ios-ok" onclick="dismissIosBanner()">Got it</button>
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- MAIN APP SCRIPT                                                          -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
 <script>
 "use strict";
-(function () {
+var currentUser=null,changePwEmail=null,sessionPerms={};
+var allRecords=[],filteredRecords=[],selectedRecordIds=new Set();
+var currentStatusFilter="all",currentSearchTerm="",currentPage=1,rowsPerPage=100;
+var editMode=false,editId=null,pendingAction=null,pendingDeleteIds=[],pendingDeleteEmail=null;
+var selectedTests=new Map(),testPriceMap={},customDoctorList=[],customTests=[],doctorToDelete=null;
+var searchDebounceTimer=null,permModalEmail=null,permModalPerms=null;
 
-  // ══ CONFIG ═══════════════════════════════════════════════════════════════
-  // Paste your Apps Script Web app URL here (ends with /exec).
-  // Leave empty to be asked once on first launch (saved in this browser).
-  var GAS_URL = "";
-  // ══════════════════════════════════════════════════════════════════════════
+// ── SERVER BRIDGE ─────────────────────────────────────────────────────────
+// Paste your Apps Script Web app URL (ends with /exec) here. Leave "" to be asked once on first launch.
+var GAS_URL = "";
+function getGasUrl(){
+  var u=(GAS_URL||"").trim();
+  if(!u){try{u=localStorage.getItem("spg_gas_url")||"";}catch(e){}}
+  return u;
+}
+function validGasUrl(v){try{var u=new URL(v);return u.protocol==="https:"&&u.hostname==="script.google.com"&&/\/exec$/.test(u.pathname);}catch(e){return false;}}
+function saveGasUrl(){
+  var v=(document.getElementById("gasUrlInput").value||"").trim().split("?")[0].split("#")[0];
+  var err=document.getElementById("gasUrlErr");
+  if(!validGasUrl(v)){err.textContent="Web app URL daalo: https://script.google.com/.../exec";err.style.display="block";return;}
+  try{localStorage.setItem("spg_gas_url",v);}catch(e){}
+  location.reload();
+}
+function gasRun(fn,args,ok,fail){
+  var onFail=fail||function(e){showAlert("Error: "+e,"error");};
+  var base=getGasUrl();
+  if(!base){document.getElementById("gasSetup").style.display="flex";onFail("Server URL not set.");return;}
+  if(navigator.onLine===false){onFail("You're offline — internet chahiye.");return;}
+  fetch(base,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({fn:fn,args:args||[]}),redirect:"follow"})
+    .then(function(r){return r.text();})
+    .then(function(t){
+      var j;try{j=JSON.parse(t);}catch(e){throw new Error("Server ne galat reply diya. Apps Script ko 'New version' deploy kiya? (Access: Anyone)");}
+      if(j&&j.__error)throw new Error(j.__error);
+      (ok||function(){})(j?j.result:undefined);
+    })
+    .catch(function(e){onFail((e&&e.message)||String(e));});
+}
+function showAlert(msg,type){var d=document.createElement("div");d.className="alert";d.style.background=type==="error"?"#c0392b":type==="warning"?"#d39e00":"#1f2f3e";d.innerText=msg;document.body.appendChild(d);setTimeout(function(){d.remove();},4000);}
+function escapeHtml(s){return(s||"").replace(/[&<>"']/g,function(m){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];});}
+function formatCurrency(n){return"₹"+(parseFloat(n)||0).toFixed(2);}
+function closeModal(){document.getElementById("confirmModal").style.display="none";pendingAction=null;pendingDeleteIds=[];pendingDeleteEmail=null;}
+function actor(){return{email:(currentUser&&currentUser.email)||"",role:(currentUser&&currentUser.role)||""};}
 
-  var LS_URL = "spg_gas_url";
-  var TABS   = ["add", "view", "doctors", "bookings", "users", "audit", "report"];
+// ── AUTH ──────────────────────────────────────────────────────────────────
+function doLogin(){
+  var email=(document.getElementById("loginEmail").value||"").trim();
+  var pw=document.getElementById("loginPassword").value||"";
+  var btn=document.getElementById("loginBtn");
+  if(!email||!pw){showLoginMsg("Please enter your email and password.","error");return;}
+  btn.disabled=true;btn.innerText="⏳ Signing in...";
+  document.getElementById("loginError").style.display="none";
+  document.getElementById("loginWarning").style.display="none";
+  gasRun("loginUser",[email,pw],
+    function(r){
+      btn.disabled=false;btn.innerText="🔑 Sign In";
+      if(r&&r.success){currentUser=r.user;onLoginSuccess();}
+      else{var msg=(r&&r.message)||"Invalid credentials.";if(msg.indexOf("locked")>=0)showLoginMsg(msg,"error");else if(msg.indexOf("attempt")>=0)showLoginMsg(msg,"warning");else showLoginMsg(msg,"error");}
+    },
+    function(e){btn.disabled=false;btn.innerText="🔑 Sign In";showLoginMsg("Login failed: "+e,"error");}
+  );
+}
+function showLoginMsg(msg,type){var e=document.getElementById("loginError"),w=document.getElementById("loginWarning");if(type==="warning"){w.innerText="⚠️ "+msg;w.style.display="block";e.style.display="none";}else{e.innerText="🚫 "+msg;e.style.display="block";w.style.display="none";}}
+function onLoginSuccess(){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("mainApp").style.display="block";
+  document.getElementById("userNameBar").innerText=currentUser.fullName;
+  document.getElementById("userAvatarBar").innerText=currentUser.fullName.charAt(0).toUpperCase();
+  var pill=document.getElementById("userRolePill");pill.innerText=currentUser.role;pill.className="role-pill "+currentUser.role;
+  initApp();
+  gasRun("getAllPermissions",[],function(p){sessionPerms=p||{};applyTabVisibility();applyCurrentUserPermissions();},
+    function(){sessionPerms={};applyTabVisibility();applyCurrentUserPermissions();});
+}
+function doLogout(){sessionPerms={};currentUser=null;document.getElementById("mainApp").style.display="none";document.getElementById("loginScreen").style.display="flex";document.getElementById("loginEmail").value="";document.getElementById("loginPassword").value="";document.getElementById("loginError").style.display="none";document.getElementById("loginWarning").style.display="none";}
+function isAdmin(){return currentUser&&(currentUser.role==="Admin"||currentUser.role==="Owner");}
+function isOwner(){return currentUser&&currentUser.role==="Owner";}
+function requireAdmin(a){if(!isAdmin()){showAlert("🔒 Admin access required for: "+a,"warning");return false;}return true;}
 
-  var $ = function (id) { return document.getElementById(id); };
-  var appFrame = $("appFrame"), splash = $("splash"), setup = $("setup");
-  var offFrame = $("offlineFrame"), toastEl = $("toast");
-  var appLoaded = false, splashTimer = null, toastTimer = null;
+// ── TAB VISIBILITY ────────────────────────────────────────────────────────
+function canSeeTab(tabKey){
+  if(isOwner()) return true;
+  if(tabKey==="audit") return false;
+  var permMap={records:"canViewRecords",doctors:"canViewDoctorStats",users:"canViewUsers",bookings:"canViewBookings",report:"canViewReport"};
+  var pk=permMap[tabKey];
+  if(!pk) return false;
+  var ek=(currentUser.email||"").toLowerCase();
+  return sessionPerms[ek]&&sessionPerms[ek][pk]===true;
+}
+function applyTabVisibility(){
+  document.getElementById("tabView").style.display=canSeeTab("records")?"inline-block":"none";
+  document.getElementById("tabDoctors").style.display=canSeeTab("doctors")?"inline-block":"none";
+  document.getElementById("tabUsers").style.display=canSeeTab("users")?"inline-block":"none";
+  document.getElementById("tabBookings").style.display=canSeeTab("bookings")?"inline-block":"none";
+  document.getElementById("tabAudit").style.display=isOwner()?"inline-block":"none";
+  document.getElementById("tabReport").style.display="inline-block";
+  var mb=document.getElementById("manageDoctorsBtn");if(mb)mb.style.display=isAdmin()?"inline-flex":"none";
+  var sr=document.getElementById("summaryRow");if(sr)sr.style.display=isAdmin()?"block":"none";
+  document.querySelectorAll(".admin-kpi").forEach(function(el){el.style.display=isAdmin()?"flex":"none";});
+  var ph=document.getElementById("permColHeader");if(ph)ph.style.display=isOwner()?"":"none";
+  var npr=document.getElementById("newUserTabPermsRow");if(npr)npr.style.display=isOwner()?"block":"none";
+}
+function applyCurrentUserPermissions(){
+  var sel=document.getElementById("doctorNameSelect"),ex=sel?sel.querySelector('option[value="__add_new__"]'):null;
+  if(currentUserCan("canAddDoctor")){if(!ex){var o=document.createElement("option");o.value="__add_new__";o.style.cssText="background:#e8f5e9;color:#2c7a4d;font-weight:bold;";o.textContent="➕ + Add New Doctor";if(sel&&sel.options.length>0)sel.insertBefore(o,sel.options[1]);else if(sel)sel.appendChild(o);}}else{if(ex)ex.remove();}
+  var btn=document.getElementById("addTestOptionBtn");if(btn)btn.style.display=currentUserCan("canAddTest")?"block":"none";
+}
+function currentUserCan(k){
+  if(isOwner())return true;
+  var ek=(currentUser.email||"").toLowerCase();
+  return sessionPerms[ek]&&sessionPerms[ek][k]===true;
+}
 
-  // ── Helper functions ─────────────────────────────────────────────────────
-  function isStandalone() {
-    return window.matchMedia("(display-mode: standalone)").matches
-        || window.matchMedia("(display-mode: minimal-ui)").matches
-        || window.navigator.standalone === true;
-  }
-  function isIOSSafari() {
-    var ua = navigator.userAgent;
-    var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-    var isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
-    return isIOS && isSafari;
-  }
-
-  // ── Toast ────────────────────────────────────────────────────────────────
-  function showToast(msg, actionLabel, actionFn, ms) {
-    $("toastText").textContent = msg;
-    var b = $("toastAction");
-    if (actionLabel) { b.textContent = actionLabel; b.style.display = "inline-block"; b.onclick = actionFn; }
-    else { b.style.display = "none"; b.onclick = null; }
-    toastEl.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, ms || 3500);
-  }
-
-  // ── URL params: ?tab=xyz  ?source=pwa ────────────────────────────────────
-  var qs = new URLSearchParams(location.search);
-  var tab = (qs.get("tab") || "").toLowerCase();
-  if (TABS.indexOf(tab) < 0) tab = "";
-  var source = qs.get("source") || "";
-
-  if (qs.get("setup") === "1") { try { localStorage.removeItem(LS_URL); } catch (e) {} }
-
-  // Track PWA launches (?source=pwa or running standalone)
-  if (source === "pwa" || isStandalone()) {
-    try {
-      var n = (parseInt(localStorage.getItem("spg_pwa_launches"), 10) || 0) + 1;
-      localStorage.setItem("spg_pwa_launches", String(n));
-      localStorage.setItem("spg_pwa_last_launch", new Date().toISOString());
-    } catch (e) {}
-    console.log("[PWA] Launched as app · source:", source || "standalone", "· tab:", tab || "-");
-  }
-
-  // Strip params from the address bar so "Add to Home Screen" on iOS never pins a ?tab=
-  try { history.replaceState(null, "", location.pathname); } catch (e) {}
-
-  // ── Load the Apps Script app ─────────────────────────────────────────────
-  function getGasUrl() {
-    var u = (GAS_URL || "").trim();
-    if (!u) { try { u = localStorage.getItem(LS_URL) || ""; } catch (e) {} }
-    return u;
-  }
-  function validGasUrl(v) {
-    try {
-      var u = new URL(v);
-      return u.protocol === "https:" && u.hostname === "script.google.com" && /\/exec$/.test(u.pathname);
-    } catch (e) { return false; }
-  }
-  function hideSplash() {
-    clearTimeout(splashTimer);
-    splash.classList.add("hide");
-  }
-  function loadApp() {
-    var base = getGasUrl();
-    if (!base || !validGasUrl(base)) { splash.classList.add("hide"); setup.style.display = "flex"; return; }
-    setup.style.display = "none";
-    if (!navigator.onLine) { showOffline(); return; }
-    var u = new URL(base);
-    u.searchParams.set("source", source || "web");
-    if (tab) u.searchParams.set("tab", tab);
-    u.searchParams.set("standalone", isStandalone() ? "1" : "0");
-    splash.classList.remove("hide");
-    appFrame.src = u.href;
-    appLoaded = true;
-    splashTimer = setTimeout(hideSplash, 15000);
-  }
-  appFrame.addEventListener("load", function () { if (appFrame.getAttribute("src")) hideSplash(); });
-
-  $("setupSave").addEventListener("click", function () {
-    var v = ($("setupUrl").value || "").trim().split("?")[0].split("#")[0];
-    var err = $("setupErr");
-    if (!validGasUrl(v)) {
-      err.textContent = "Enter the Web app URL that starts with https://script.google.com/ and ends with /exec";
-      err.style.display = "block"; return;
+// ── PERMISSIONS MODAL ─────────────────────────────────────────────────────
+function openPermModal(email,name,role){
+  if(!isOwner()){showAlert("🔒 Only the Owner can manage permissions.","error");return;}
+  permModalEmail=email;
+  var ek=(email||"").toLowerCase();
+  permModalPerms=sessionPerms[ek]||{canAddDoctor:false,canAddTest:false,canViewRecords:false,canViewDoctorStats:false,canViewUsers:false,canViewBookings:false};
+  document.getElementById("permModalTarget").innerText="Editing permissions for: "+name+" ("+email+") · "+role;
+  renderPermModalBody();
+  document.getElementById("permModal").style.display="flex";
+}
+function closePermModal(){document.getElementById("permModal").style.display="none";permModalEmail=null;permModalPerms=null;}
+function renderPermModalBody(){
+  var p=permModalPerms;
+  var rows=[
+    {key:"canViewRecords",     label:"📋 Records Tab",      section:"Tab Access"},
+    {key:"canViewDoctorStats", label:"👨‍⚕️ Doctor Stats Tab", section:"Tab Access"},
+    {key:"canViewUsers",       label:"👥 Users Tab",         section:"Tab Access"},
+    {key:"canViewBookings",    label:"📅 Bookings Tab",       section:"Tab Access"},
+    {key:"canAddDoctor",       label:"Can Add Doctors",      section:"Action Permissions"},
+    {key:"canAddTest",         label:"Can Add Tests",        section:"Action Permissions"}
+  ];
+  var container=document.getElementById("permModalBody");
+  container.innerHTML="";
+  var wrap=document.createElement("div");
+  wrap.style.cssText="display:flex;flex-wrap:wrap;gap:8px;line-height:2.2;";
+  var lastSection="";
+  rows.forEach(function(r){
+    if(r.section!==lastSection){
+      var sec=document.createElement("span");
+      sec.className="perm-section-title";sec.style.width="100%";sec.textContent=r.section;
+      wrap.appendChild(sec);lastSection=r.section;
     }
-    try { localStorage.setItem(LS_URL, v); } catch (e) {}
-    err.style.display = "none";
-    loadApp();
+    var val=p[r.key]===true;
+    var btn=document.createElement("span");
+    btn.className="perm-toggle "+(val?"granted":"denied");
+    btn.setAttribute("data-key",r.key);
+    btn.innerHTML='<span class="perm-dot"></span>'+escapeHtml(r.label)+(val?" ✓":" ✗");
+    btn.addEventListener("click",function(){togglePermModal(this.getAttribute("data-key"));});
+    wrap.appendChild(btn);
   });
-  $("setupUrl").addEventListener("keydown", function (e) { if (e.key === "Enter") $("setupSave").click(); });
+  container.appendChild(wrap);
+}
+function togglePermModal(key){
+  if(!permModalEmail||!permModalPerms)return;
+  var newVal=!permModalPerms[key];
+  permModalPerms[key]=newVal;
+  var ek=(permModalEmail||"").toLowerCase();
+  if(!sessionPerms[ek])sessionPerms[ek]={};
+  sessionPerms[ek][key]=newVal;
+  var a=actor();
+  gasRun("setUserPermission",[ek,key,newVal,a.email,a.role],
+    function(res){if(res&&!res.success)showAlert(res.message,"error");},
+    function(e){showAlert("Error saving permission: "+e,"error");});
+  renderPermModalBody();
+}
 
-  // ── Offline handling ─────────────────────────────────────────────────────
-  function showOffline() {
-    if (!offFrame.getAttribute("src")) offFrame.src = "offline.html?embed=1";
-    offFrame.style.display = "block";
-    splash.classList.add("hide");
+// ── ROLE DROPDOWN ─────────────────────────────────────────────────────────
+function populateRoleDropdown(){
+  var sel=document.getElementById("newUserRole");if(!sel)return;
+  sel.innerHTML="";
+  var u=document.createElement("option");u.value="User";u.textContent="User (Add records only)";sel.appendChild(u);
+  if(isOwner()){
+    var a=document.createElement("option");a.value="Admin";a.textContent="Admin (Full access)";sel.appendChild(a);
+    var o=document.createElement("option");o.value="Owner";o.textContent="Owner (Permanent full access)";sel.appendChild(o);
   }
-  function onBackOnline() {
-    offFrame.style.display = "none";
-    if (!appLoaded) loadApp(); else showToast("Back online", null, null, 2500);
-  }
-  window.addEventListener("offline", showOffline);
-  window.addEventListener("online", onBackOnline);
+}
 
-  // ── Install flow (NO automatic prompt — only after a user click) ─────────
+// ── USER MANAGEMENT ───────────────────────────────────────────────────────
+function loadUsers(){
+  if(!isAdmin())return;
+  document.getElementById("usersTableBody").innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:#888;">Loading...</td></tr>';
+  gasRun("getAllUsers",[],function(u){renderUsersTable(u||[]);},
+    function(e){document.getElementById("usersTableBody").innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:#e63946;">Error: '+escapeHtml(e)+'</td></tr>';});
+}
+function renderUsersTable(users){
+  var tbody=document.getElementById("usersTableBody");
+  if(!users.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:30px;color:#888;">No users found.</td></tr>';return;}
+  tbody.innerHTML="";
+  users.forEach(function(u){
+    var isSelf=u.email===currentUser.email, isOwnerAcc=u.role==="Owner", isAdminAcc=u.role==="Admin";
+    var tr=document.createElement("tr");
+    var tdName=document.createElement("td");tdName.innerHTML="<strong>"+escapeHtml(u.fullName)+"</strong>";tr.appendChild(tdName);
+    var tdEmail=document.createElement("td");tdEmail.textContent=u.email;tr.appendChild(tdEmail);
+    var tdRole=document.createElement("td");
+    tdRole.innerHTML=isOwnerAcc?'<span class="role-badge-owner">👑 Owner</span>':isAdminAcc?'<span class="role-badge-admin">🛡️ Admin</span>':'<span class="role-badge-user">👤 User</span>';
+    tr.appendChild(tdRole);
+    if(isOwner()){
+      var tdPerm=document.createElement("td");
+      if(isOwnerAcc){tdPerm.innerHTML='<span style="color:#7c3aed;font-size:.7rem;font-weight:700;">Full Access</span>';}
+      else{
+        var permBtn=document.createElement("button");
+        permBtn.className="btn btn-sm";permBtn.style.cssText="background:#e0e7ff;color:#3730a3;padding:4px 12px;";permBtn.textContent="🔐 Edit";
+        permBtn.addEventListener("click",(function(email,name,role){return function(){openPermModal(email,name,role);};})(u.email,u.fullName,u.role));
+        tdPerm.appendChild(permBtn);
+      }
+      tr.appendChild(tdPerm);
+    }
+    var tdStatus=document.createElement("td");
+    var statusHtml=u.isLocked?'<span class="locked-badge">🔒 Locked</span>':'<span style="color:#059669;font-size:.7rem;font-weight:700;">✅ Active</span>';
+    if(u.failCount>0&&!u.isLocked)statusHtml+=' <span style="color:#d97706;font-size:.65rem;">('+u.failCount+' fail)</span>';
+    tdStatus.innerHTML=statusHtml;tr.appendChild(tdStatus);
+    var tdCreated=document.createElement("td");tdCreated.textContent=u.createdAt?new Date(u.createdAt).toLocaleDateString("en-IN"):"—";tr.appendChild(tdCreated);
+    var tdActions=document.createElement("td");
+    if(isOwnerAcc&&!isSelf){tdActions.innerHTML='<span style="font-size:.7rem;color:#7c3aed;font-weight:700;">🔒 Protected</span>';}
+    else{
+      if(!(isOwnerAcc&&!isSelf)){
+        var pwBtn=document.createElement("button");pwBtn.className="btn btn-warning btn-sm";pwBtn.textContent="🔑 PW";
+        pwBtn.addEventListener("click",(function(email,name){return function(){openChangePasswordModal(email,name);};})(u.email,u.fullName));
+        tdActions.appendChild(pwBtn);
+      }
+      if(isSelf){var s=document.createElement("span");s.style.cssText="font-size:.7rem;color:#888;";s.textContent="(You)";tdActions.appendChild(s);}
+      else if(isOwnerAcc){var l=document.createElement("span");l.style.cssText="font-size:.7rem;color:#7c3aed;";l.textContent="🔒";tdActions.appendChild(l);}
+      else if(isAdminAcc&&!isOwner()){var oo=document.createElement("span");oo.style.cssText="font-size:.7rem;color:#d97706;font-weight:700;";oo.textContent="Owner only";tdActions.appendChild(oo);}
+      else{
+        var delBtn=document.createElement("button");delBtn.className="btn btn-danger btn-sm";delBtn.textContent="🗑️";
+        delBtn.addEventListener("click",(function(email,name){return function(){deleteUserPrompt(email,name);};})(u.email,u.fullName));
+        tdActions.appendChild(delBtn);
+      }
+      if(u.isLocked&&isAdmin()){
+        var unlockBtn=document.createElement("button");unlockBtn.className="btn btn-sm";
+        unlockBtn.style.cssText="background:#7c3aed;color:white;";unlockBtn.textContent="🔓 Unlock";
+        unlockBtn.addEventListener("click",(function(email){return function(){unlockUserAccount(email);};})(u.email));
+        tdActions.appendChild(unlockBtn);
+      }
+    }
+    tr.appendChild(tdActions);
+    tbody.appendChild(tr);
+  });
+  var ph=document.getElementById("permColHeader");if(ph)ph.style.display=isOwner()?"":"none";
+}
+function addNewUser(){
+  if(!requireAdmin("add users"))return;
+  var name=(document.getElementById("newUserName").value||"").trim(),email=(document.getElementById("newUserEmail").value||"").trim(),pw=document.getElementById("newUserPassword").value||"",role=document.getElementById("newUserRole").value;
+  if(!name||!email||!pw){showAlert("Please fill all required fields","error");return;}
+  if(pw.length<6){showAlert("Password must be at least 6 characters","error");return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showAlert("Invalid email address","error");return;}
+  var ud={fullName:name,email:email,password:pw,role:role,
+    canAddDoctor:  isOwner()&&document.getElementById("newUserCanAddDoctor").checked,
+    canAddTest:    isOwner()&&document.getElementById("newUserCanAddTest").checked,
+    canViewRecords:    isOwner()&&document.getElementById("newUserCanViewRecords").checked,
+    canViewDoctorStats:isOwner()&&document.getElementById("newUserCanViewDoctorStats").checked,
+    canViewUsers:      isOwner()&&document.getElementById("newUserCanViewUsers").checked,
+    canViewBookings:   isOwner()&&document.getElementById("newUserCanViewBookings").checked,
+  };
+  var a=actor();
+  gasRun("createUser",[ud,a.email,a.role],
+    function(r){if(r.success){showAlert("✓ User \""+name+"\" created!");["newUserName","newUserEmail","newUserPassword"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("newUserRole").value="User";document.getElementById("pwStrengthBar").style.background="";if(isOwner()){["newUserCanAddDoctor","newUserCanAddTest","newUserCanViewRecords","newUserCanViewDoctorStats","newUserCanViewUsers","newUserCanViewBookings"].forEach(function(id){document.getElementById(id).checked=false;});}loadUsers();}else{showAlert(r.message,"error");}},
+    function(e){showAlert("Error: "+e,"error");});
+}
+function deleteUserPrompt(email,name){pendingAction="deleteUser";pendingDeleteEmail=email;document.getElementById("confirmMessage").innerHTML="Delete user <strong>"+escapeHtml(name)+"</strong> ("+escapeHtml(email)+")? Cannot be undone.";document.getElementById("confirmModal").style.display="flex";}
+function unlockUserAccount(email){var a=actor();gasRun("unlockUser",[email,a.email,a.role],function(r){if(r.success){showAlert("✓ Account unlocked!");loadUsers();}else{showAlert(r.message,"error");}},function(e){showAlert("Error: "+e,"error");});}
+function openChangePasswordModal(email,name){changePwEmail=email;document.getElementById("changePwTarget").innerText="Changing password for: "+name+" ("+email+")";document.getElementById("newPasswordField").value="";document.getElementById("confirmPasswordField").value="";document.getElementById("changePasswordModal").style.display="flex";}
+function closeChangePasswordModal(){document.getElementById("changePasswordModal").style.display="none";changePwEmail=null;}
+function confirmChangePassword(){var np=document.getElementById("newPasswordField").value,cp=document.getElementById("confirmPasswordField").value;if(!np||np.length<6){showAlert("Password must be at least 6 characters","error");return;}if(np!==cp){showAlert("Passwords do not match","error");return;}var a=actor();gasRun("changeUserPassword",[changePwEmail,np,a.email,a.role],function(r){if(r.success){showAlert("✓ Password updated!");closeChangePasswordModal();}else{showAlert(r.message,"error");}},function(e){showAlert("Error: "+e,"error");});}
+function checkPasswordStrength(pw){var bar=document.getElementById("pwStrengthBar");if(!pw){bar.style.background="";bar.style.width="0";return;}var s=0;if(pw.length>=6)s++;if(pw.length>=10)s++;if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;var c=["#e63946","#ff9800","#ffc107","#8bc34a","#2c7a4d"],w=["20%","40%","60%","80%","100%"];bar.style.background=c[s-1]||"#e2edf2";bar.style.width=w[s-1]||"0";}
+
+// ── AUDIT LOG ─────────────────────────────────────────────────────────────
+function loadAuditLog(){document.getElementById("auditBody").innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:#888;">Loading...</td></tr>';gasRun("getAuditLog",[300],renderAuditLog,function(e){document.getElementById("auditBody").innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:#e63946;">Error: '+escapeHtml(e)+'</td></tr>';});}
+function renderAuditLog(entries){var tbody=document.getElementById("auditBody");if(!entries||!entries.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:#888;">No entries yet.</td></tr>';return;}tbody.innerHTML=entries.map(function(e){var cls="audit-action audit-"+(e.action||"").replace(/[^A-Z_]/g,"");return'<tr><td style="white-space:nowrap;font-size:.68rem;">'+escapeHtml(e.timestamp)+'</td><td>'+escapeHtml(e.email)+'</td><td><span style="font-size:.68rem;font-weight:700;color:#1f3b4c;">'+escapeHtml(e.role)+'</span></td><td><span class="'+cls+'">'+escapeHtml(e.action)+'</span></td><td>'+escapeHtml(e.target)+'</td><td style="max-width:200px;font-size:.68rem;color:#666;">'+escapeHtml(e.details)+'</td></tr>';}).join("");}
+
+// ── DOCTORS ───────────────────────────────────────────────────────────────
+function loadDoctorsFromStorage(){var s=localStorage.getItem("spg_doctor_list");customDoctorList=s?JSON.parse(s):["Dr. Premshakar Kejjriwal","Dr Ashok Singh","Dr. Vijender vidhayarthi","Dr Anil Sha","Dr. Vivek Kejriwal","Dr. Krishnandan Ram","Dr. Sashi Singh","Dr Raja Kumar","Dr. Amit kumar","Dr. Sonu Khon","Dr.C.D Singh","Dr. Manju Kumari","Dr. Ashok Kumar","Dr. Vikram Kumar","Dr. Sabita","Dr. A Paswan","Dr. Rani Kumari","Dr. Rakesh Thakur","Dr Aaryad","Dr Bablu Mandal","Dr Bablu Shah","Dr. Savitri Medica"];}
+function saveDoctorsToStorage(){localStorage.setItem("spg_doctor_list",JSON.stringify(customDoctorList));}
+function openDeleteDoctorModal(n){doctorToDelete=n;document.getElementById("deleteDoctorMessage").innerHTML="Remove <strong>"+escapeHtml(n)+"</strong>?";document.getElementById("deleteDoctorModal").style.display="flex";}
+function closeDeleteDoctorModal(){document.getElementById("deleteDoctorModal").style.display="none";doctorToDelete=null;}
+function confirmDeleteDoctor(){if(!doctorToDelete)return;customDoctorList=customDoctorList.filter(function(d){return d!==doctorToDelete;});saveDoctorsToStorage();populateDoctorDropdown();renderManageDoctorsList();showAlert("✓ Doctor removed");doctorToDelete=null;closeDeleteDoctorModal();loadDoctorStats();}
+function deleteDoctor(n){openDeleteDoctorModal(n);}
+function renderManageDoctorsList(){var c=document.getElementById("doctorsListManage");if(!c)return;if(!customDoctorList.length){c.innerHTML='<p style="color:#888;text-align:center;padding:20px;">No doctors</p>';return;}c.innerHTML=customDoctorList.map(function(d){return'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 6px;border-bottom:1px solid #eee;"><span>👨‍⚕️ '+escapeHtml(d)+'</span><button class="btn btn-danger btn-sm" onclick="deleteDoctor(\''+d.replace(/'/g,"\\'")+'\')">🗑️</button></div>';}).join("");}
+function openManageDoctorsModal(){if(!isAdmin()){showAlert("🔒 Admin only","error");return;}renderManageDoctorsList();document.getElementById("manageDoctorsModal").style.display="flex";}
+function closeManageDoctorsModal(){document.getElementById("manageDoctorsModal").style.display="none";}
+function addNewDoctorFromManage(){var n=(document.getElementById("newDoctorNameManage").value||"").trim();if(!n){showAlert("Enter doctor name","error");return;}if(customDoctorList.indexOf(n)>=0){showAlert("Doctor already exists!","warning");return;}customDoctorList.push(n);customDoctorList.sort();saveDoctorsToStorage();populateDoctorDropdown();renderManageDoctorsList();document.getElementById("newDoctorNameManage").value="";showAlert("✓ Doctor added");}
+function populateDoctorDropdown(){var sel=document.getElementById("doctorNameSelect"),cur=sel.value;sel.innerHTML='<option value="">-- Select Referring Doctor --</option>';if(currentUserCan("canAddDoctor")){var o=document.createElement("option");o.value="__add_new__";o.style.cssText="background:#e8f5e9;color:#2c7a4d;font-weight:bold;";o.textContent="➕ + Add New Doctor";sel.appendChild(o);}customDoctorList.forEach(function(d){var o=document.createElement("option");o.value=d;o.textContent=d;sel.appendChild(o);});if(cur&&cur!=="__add_new__")sel.value=cur;}
+function saveNewDoctor(){var n=(document.getElementById("newDoctorName").value||"").trim();if(!n){showAlert("Enter doctor name","error");return;}if(customDoctorList.indexOf(n)>=0){showAlert("Doctor already exists!","warning");return;}customDoctorList.push(n);customDoctorList.sort();saveDoctorsToStorage();populateDoctorDropdown();document.getElementById("doctorNameSelect").value=n;document.getElementById("addDoctorPanel").style.display="none";document.getElementById("newDoctorName").value="";showAlert("✓ Doctor added!");}
+function cancelAddDoctor(){document.getElementById("addDoctorPanel").style.display="none";document.getElementById("newDoctorName").value="";}
+
+// ── TESTS ─────────────────────────────────────────────────────────────────
+var baseTestCategories={"🩸 HAEMATOLOGY":["GBP","CBC","ESR","HB,TC,DC","HB","HB,TC,DC,AEC","HB,TC,DC,ESR","PLATELET COUNT","HB,TC,DC,PC","BT,CT","ABO","PCV","RBC"],"🧪 BIOCHEMISTRY":["SUGER R","SUGER F","SUGAR PP","RBS","UREA","CREATININE","ELECTROLYTE","SGOT","SGPT","BILIRUBIN T/D","ALKPH","PROTEIN A/GRATIO","LFT","RFT","CALCIUM","PHOSPHOROUS","URICACID","CHOLESTEROL","TG CHOLESTEROL","LIPID PROFILE","PT INR"],"🧫 SEROLOGY":["RA(QUANTITATIVE)","ASO(QUANTITATIVE)","CRP(QUANTITATIVE)","TPHA","DENGUE","LEPTOSPIRA","MANTOUX","KALAJAR","FILERIA","HIV","HBSaG","HCV","VDRL","WIDAL","MALARIA ANTIGEN","TYPHIDOT","PREGNANCY","URINE R/M","URINE C/S","PUS C/S","STOOL R/M","STOOL C/S","TROP-T"],"🔬 SPECIAL TEST":["AMYLASE","LIPASE","T3,T4,TSH","TSH","FT3,FT4,TSH","HBA1C","PSA","ANA","PROLACTIN","LH","FSH","TB GOLD","CHO","TG","HDL","LDL","VLDL","NON HDL","CHO/HDL","LDL/HDL","total lipid"]};
+var testCategories={};
+function rebuildTestCategories(){testCategories=JSON.parse(JSON.stringify(baseTestCategories));customTests.forEach(function(t){if(!testCategories[t.category])testCategories[t.category]=[];if(testCategories[t.category].indexOf(t.name)<0)testCategories[t.category].push(t.name);});}
+function loadCustomTests(){var s=localStorage.getItem("spg_custom_tests");if(s){customTests=JSON.parse(s);customTests.forEach(function(t){testPriceMap[t.name]=t.price;});}}
+function saveCustomTests(){localStorage.setItem("spg_custom_tests",JSON.stringify(customTests));}
+function showAddTestPanel(){if(!currentUserCan("canAddTest")){showAlert("🔒 No permission to add tests.","warning");return;}document.getElementById("addTestPanel").style.display="block";}
+function saveNewTest(){var n=(document.getElementById("newTestName").value||"").trim(),p=parseFloat(document.getElementById("newTestPrice").value),cat=document.getElementById("newTestCategory").value;if(!n||isNaN(p)||p<=0){showAlert("Valid test name and price required","error");return;}if(testPriceMap[n]!==undefined){showAlert("Test already exists!","warning");return;}customTests.push({name:n,price:p,category:cat});saveCustomTests();testPriceMap[n]=p;rebuildTestCategories();renderTestCategories(document.getElementById("testSearchInput").value||"");document.getElementById("addTestPanel").style.display="none";document.getElementById("newTestName").value="";document.getElementById("newTestPrice").value="";showAlert("✓ Test added ₹"+p.toFixed(2));}
+function cancelAddTest(){document.getElementById("addTestPanel").style.display="none";document.getElementById("newTestName").value="";document.getElementById("newTestPrice").value="";}
+function deleteCustomTest(n){customTests=customTests.filter(function(t){return t.name!==n;});delete testPriceMap[n];saveCustomTests();rebuildTestCategories();renderTestCategories(document.getElementById("testSearchInput").value||"");if(selectedTests.has(n))selectedTests.delete(n);updateSelectedTests();calculateAmounts();renderManageTestsList();showAlert("✓ Test deleted");}
+function renderManageTestsList(){var c=document.getElementById("testsListManage");if(!c)return;if(!customTests.length){c.innerHTML='<p style="color:#888;text-align:center;padding:20px;">No custom tests yet.</p>';return;}c.innerHTML=customTests.map(function(t){return'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 6px;border-bottom:1px solid #eee;"><span><strong>'+escapeHtml(t.name)+'</strong> — ₹'+t.price.toFixed(2)+'</span><button class="btn btn-danger btn-sm" onclick="deleteCustomTest(\''+t.name.replace(/'/g,"\\'")+'\')">🗑️</button></div>';}).join("");}
+function openManageTestsModal(){renderManageTestsList();document.getElementById("manageTestsModal").style.display="flex";}
+function closeManageTestsModal(){document.getElementById("manageTestsModal").style.display="none";}
+function renderTestCategories(filter){filter=(filter||"").toLowerCase().trim();var html="";for(var cat in testCategories){var tests=testCategories[cat],filtered=filter?tests.filter(function(t){return t.toLowerCase().indexOf(filter)>=0;}):tests;if(!filtered.length)continue;html+='<div class="test-category"><div class="category-title">'+escapeHtml(cat)+(isAdmin()?'<span class="manage-btn" onclick="openManageTestsModal()">⚙️ Manage</span>':"")+'</div>';filtered.forEach(function(t){var p=testPriceMap[t]||0,chk=selectedTests.has(t)?"checked":"",sf=t.replace(/\\/g,"\\\\").replace(/'/g,"\\'");html+='<div class="test-item" onclick="toggleTest(\''+sf+'\','+p+')"><input type="checkbox" '+chk+' onclick="event.stopPropagation();toggleTest(\''+sf+'\','+p+')"><label>'+escapeHtml(t)+'</label><span class="test-price">₹'+p.toFixed(2)+'</span></div>';});html+="</div>";}document.getElementById("testCategoriesContainer").innerHTML=html||'<div style="padding:20px;color:#888;">No tests found</div>';}
+function filterTests(){renderTestCategories(document.getElementById("testSearchInput").value);}
+function toggleTest(n,p){if(selectedTests.has(n))selectedTests.delete(n);else selectedTests.set(n,p);updateSelectedTests();renderTestCategories(document.getElementById("testSearchInput").value||"");calculateAmounts();}
+function removeTest(n){selectedTests.delete(n);updateSelectedTests();renderTestCategories(document.getElementById("testSearchInput").value||"");calculateAmounts();}
+function updateSelectedTests(){var tags="",total=0;selectedTests.forEach(function(p,t){total+=p;var sf=t.replace(/\\/g,"\\\\").replace(/'/g,"\\'");tags+='<span class="selected-test-tag">'+escapeHtml(t)+' <span class="remove-test" onclick="removeTest(\''+sf+'\')">✖</span></span>';});document.getElementById("selectedTestsList").innerHTML=tags||'<span style="color:#666;">No tests selected</span>';document.getElementById("totalTestFeeDisplay").innerText=total.toFixed(2);}
+function calculateAmounts(){var fee=0;selectedTests.forEach(function(p){fee+=p;});var paid=parseFloat(document.getElementById("payment").value)||0,comm=parseFloat(document.getElementById("doctorCommissionPercent").value)||0,due=Math.max(0,fee-paid),dc=(fee*comm)/100,rev=fee-dc;document.getElementById("amountDue").value=due.toFixed(2);document.getElementById("doctorCommission").value=dc.toFixed(2);document.getElementById("totalRevenueField").value=rev.toFixed(2);}
+function getTotalTestFee(){var t=0;selectedTests.forEach(function(p){t+=p;});return t;}
+function getSelectedTestsString(){return Array.from(selectedTests.keys()).join(" + ");}
+
+// ── STATS ─────────────────────────────────────────────────────────────────
+function loadStats(){gasRun("getStats",[],function(s){if(!s||!isAdmin())return;document.getElementById("adminCommission").innerText=formatCurrency(s.totalCommission);document.getElementById("adminMonthCount").innerText=s.monthCount||0;document.getElementById("adminMonthName").innerText=s.currentMonth||"—";document.getElementById("adminTodayCount").innerText=s.todayCount||0;},null);}
+
+// ── RECORDS ───────────────────────────────────────────────────────────────
+function loadAllRecords(){document.getElementById("recordsBody").innerHTML='<tr><td colspan="12" style="text-align:center;padding:40px;color:#888;">Loading...</td></tr>';gasRun("getData",[],function(r){allRecords=r||[];applyFiltersAndRender();},function(e){document.getElementById("recordsBody").innerHTML='<tr><td colspan="12" style="text-align:center;padding:40px;color:#e63946;">Error: '+escapeHtml(e)+'</td></tr>';});}
+function applyFiltersAndRender(){var f=allRecords.slice();if(currentSearchTerm){var t=currentSearchTerm.toLowerCase().trim();f=f.filter(function(r){return(r.serialNo&&r.serialNo.toString().toLowerCase().indexOf(t)>=0)||(r.customerName&&r.customerName.toLowerCase().indexOf(t)>=0)||(r.phoneNumber&&r.phoneNumber.toString().indexOf(t)>=0)||(r.doctorName&&r.doctorName.toLowerCase().indexOf(t)>=0)||(r.testConducted&&r.testConducted.toLowerCase().indexOf(t)>=0)||(r.appointmentRefNo&&r.appointmentRefNo.toString().toLowerCase().indexOf(t)>=0);});}if(currentStatusFilter!=="all")f=f.filter(function(r){return(r.status||"Pending")===currentStatusFilter;});filteredRecords=f;updateSummary();currentPage=1;renderTable();renderPagination();}
+function handleSearchInput(){clearTimeout(searchDebounceTimer);searchDebounceTimer=setTimeout(function(){currentSearchTerm=document.getElementById("searchInput").value;applyFiltersAndRender();},250);}
+function applySearch(){currentSearchTerm=document.getElementById("searchInput").value;applyFiltersAndRender();}
+function updateSummary(){var tot=filteredRecords.length,fees=0,paid=0,due=0,rev=0;filteredRecords.forEach(function(r){fees+=r.testFee||0;paid+=r.payment||0;due+=Math.max(0,r.amountDue||0);rev+=r.totalRevenue||0;});document.getElementById("summaryTotal").innerText=tot;document.getElementById("summaryFees").innerHTML=formatCurrency(fees);document.getElementById("summaryPaid").innerHTML=formatCurrency(paid);document.getElementById("summaryDue").innerHTML=formatCurrency(due);document.getElementById("summaryRevenue").innerHTML=formatCurrency(rev);}
+function renderTable(){var tbody=document.getElementById("recordsBody");if(!filteredRecords.length){tbody.innerHTML='<tr><td colspan="12" style="text-align:center;padding:40px;color:#888;">No records found</td></tr>';return;}var start=(currentPage-1)*rowsPerPage,page=filteredRecords.slice(start,start+rowsPerPage),html="";page.forEach(function(r){var sc="status-"+(r.status||"Pending"),ts=(r.testConducted||"");if(ts.length>35)ts=ts.substring(0,35)+"…";var actions='<button class="btn btn-info btn-sm" onclick="editRecord('+r.serialNo+')">✏️ Edit</button>';actions+=' <button class="btn btn-sm" style="background:#6366f1;color:white;" title="Print Report" onclick="openReportPage('+r.serialNo+')">🖨️</button>';if(isAdmin())actions+=' <button class="btn btn-danger btn-sm" onclick="deleteRecord('+r.serialNo+')">🗑️</button>';html+='<tr><td style="text-align:center;">'+(isAdmin()?'<input type="checkbox"'+(selectedRecordIds.has(r.serialNo)?" checked":"")+' onclick="toggleRecordSelection('+r.serialNo+')">':'')+'</td><td style="font-weight:600;">'+r.serialNo+'</td><td>'+(r.dateOfVisit||"")+'</td><td><strong>'+escapeHtml(r.customerName)+'</strong><br><span style="color:#888;font-size:.7rem;">'+(r.age?r.age+" yrs":"")+'</span></td><td>'+(r.phoneNumber||"")+'</td><td title="'+escapeHtml(r.testConducted||"")+'">'+escapeHtml(ts)+'</td><td>'+formatCurrency(r.testFee)+'</td><td>'+formatCurrency(r.payment)+'</td><td style="'+(r.amountDue>0?"color:#b91c1c;font-weight:600;":"")+'">'+formatCurrency(r.amountDue)+'</td><td style="color:#1e7e34;font-weight:600;">'+formatCurrency(r.totalRevenue)+'</td><td><span class="status-badge '+sc+'">'+(r.status||"Pending")+'</span></td><td>'+actions+'</td></tr>';});tbody.innerHTML=html;updateBatchBar();}
+function renderPagination(){var tot=Math.ceil(filteredRecords.length/rowsPerPage),c=document.getElementById("pagination");if(tot<=1){c.innerHTML="";return;}var s=Math.max(1,currentPage-3),e=Math.min(tot,currentPage+3),html="";if(s>1)html+='<button class="page-btn" onclick="goToPage(1)">«</button>';for(var i=s;i<=e;i++)html+='<button class="page-btn'+(i===currentPage?" active":"")+'" onclick="goToPage('+i+')">'+i+'</button>';if(e<tot)html+='<button class="page-btn" onclick="goToPage('+tot+')">»</button>';html+='<span style="font-size:.75rem;color:#888;align-self:center;"> Page '+currentPage+' of '+tot+' ('+filteredRecords.length+' records)</span>';c.innerHTML=html;}
+function goToPage(p){currentPage=p;renderTable();renderPagination();}
+function toggleRecordSelection(id){if(selectedRecordIds.has(id))selectedRecordIds.delete(id);else selectedRecordIds.add(id);updateBatchBar();}
+function toggleSelectAll(){var start=(currentPage-1)*rowsPerPage,page=filteredRecords.slice(start,start+rowsPerPage),all=document.getElementById("selectAllCheckbox").checked;page.forEach(function(r){if(all)selectedRecordIds.add(r.serialNo);else selectedRecordIds.delete(r.serialNo);});renderTable();}
+function updateBatchBar(){var bar=document.getElementById("batchBar"),n=selectedRecordIds.size;document.getElementById("selectedCount").innerText=n;if(n>0&&isAdmin())bar.classList.remove("hidden");else bar.classList.add("hidden");}
+function clearSelection(){selectedRecordIds.clear();renderTable();}
+function batchDelete(){if(!requireAdmin("batch delete"))return;if(!selectedRecordIds.size)return;pendingDeleteIds=Array.from(selectedRecordIds);pendingAction="batchDelete";document.getElementById("confirmMessage").innerHTML="Delete <strong>"+pendingDeleteIds.length+"</strong> selected records? Cannot be undone.";document.getElementById("confirmModal").style.display="flex";}
+function deleteRecord(id){if(!requireAdmin("delete records"))return;pendingDeleteIds=[id];pendingAction="singleDelete";document.getElementById("confirmMessage").innerHTML="Delete record <strong>#"+id+"</strong>? Cannot be undone.";document.getElementById("confirmModal").style.display="flex";}
+function confirmAction(){var a=actor();if(pendingAction==="singleDelete"&&pendingDeleteIds.length){gasRun("deleteData",[pendingDeleteIds[0],a.email,a.role],function(){loadAllRecords();loadStats();loadDoctorStats();closeModal();showAlert("✓ Record deleted");},function(e){showAlert("Error: "+e,"error");closeModal();});}else if(pendingAction==="batchDelete"&&pendingDeleteIds.length){var tot=pendingDeleteIds.length,done=0;pendingDeleteIds.forEach(function(id){gasRun("deleteData",[id,a.email,a.role],function(){done++;if(done===tot){selectedRecordIds.clear();loadAllRecords();loadStats();loadDoctorStats();showAlert("✓ Deleted "+tot+" records");closeModal();}},null);});}else if(pendingAction==="deleteUser"&&pendingDeleteEmail){gasRun("deleteUser",[pendingDeleteEmail,a.email,a.role],function(r){if(r.success){showAlert("✓ User deleted");loadUsers();}else{showAlert(r.message,"error");}closeModal();},function(e){showAlert("Error: "+e,"error");closeModal();});}}
+
+// ── FILTERS ───────────────────────────────────────────────────────────────
+function setStatusFilter(f){currentStatusFilter=f;renderFilterChips();applyFiltersAndRender();}
+function resetFilters(){currentSearchTerm="";currentStatusFilter="all";document.getElementById("searchInput").value="";renderFilterChips();applyFiltersAndRender();}
+function changeRowsPerPage(){rowsPerPage=parseInt(document.getElementById("rowsPerPageSelect").value);currentPage=1;renderTable();renderPagination();}
+function renderFilterChips(){var c=document.getElementById("filterChipsContainer");if(!c)return;c.innerHTML="";[{k:"all",l:"🔍 All"},{k:"Pending",l:"⏳ Pending"},{k:"Completed",l:"✅ Completed"},{k:"Cancelled",l:"❌ Cancelled"}].forEach(function(f){var b=document.createElement("button");b.className="chip"+(currentStatusFilter===f.k?" active":"");b.textContent=f.l;b.onclick=function(){setStatusFilter(f.k);};c.appendChild(b);});}
+
+// ── DOCTOR STATS ──────────────────────────────────────────────────────────
+function loadDoctorStats(){var c=document.getElementById("doctorStatsContainer");if(!c)return;c.innerHTML='<div style="text-align:center;padding:40px;color:#6c757d;">Loading...</div>';gasRun("getDoctorStats",[],renderDoctorStats,function(e){c.innerHTML='<div class="empty-state">⚠️ Failed. '+escapeHtml(e)+'</div>';});}
+function refreshDoctorStats(){loadDoctorStats();}
+function renderDoctorStats(stats){
+  var c=document.getElementById("doctorStatsContainer");
+  if(!stats||!Object.keys(stats).length){c.innerHTML='<div class="empty-state">📭 No doctor data available.</div>';return;}
+  var now=new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+  c.innerHTML="";
+  Object.keys(stats).sort().forEach(function(doc){
+    var d=stats[doc];
+    var card=document.createElement("div");card.className="doctor-stat-card";
+    var delBtn="";
+    if(isAdmin()){
+      var db=document.createElement("button");db.className="small-delete-btn";db.title="Remove";db.textContent="✕";
+      db.addEventListener("click",(function(n){return function(){deleteDoctor(n);};})(doc));
+      var dba=document.createElement("div");dba.className="doctor-card-actions";dba.appendChild(db);delBtn=dba.outerHTML;
+    }
+    var total=d.totalTests||1;
+    var compPct=Math.round(((d.completedCount||0)/total)*100);
+    var pendPct=Math.round(((d.pendingCount||0)/total)*100);
+    var canPct =Math.round(((d.cancelledCount||0)/total)*100);
+    var recentRows="";
+    if(d.recentPatients&&d.recentPatients.length){
+      recentRows=d.recentPatients.map(function(p){
+        var sc=p.status==="Completed"?"#d3f0df;color:#0a4b2a":p.status==="Cancelled"?"#ffe0e0;color:#b91c1c":"#fff1cf;color:#b45309";
+        return'<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f0f4f7;font-size:.68rem;">'+'<span style="flex:1;font-weight:600;color:#1f3b4c;">'+escapeHtml(p.name)+'</span>'+'<span style="flex:1;color:#888;text-align:center;">'+escapeHtml(p.date)+'</span>'+'<span style="padding:2px 8px;border-radius:20px;background:'+sc+';font-weight:700;font-size:.6rem;">'+escapeHtml(p.status)+'</span>'+'</div>';
+      }).join("");
+    }else{recentRows='<div style="font-size:.7rem;color:#aaa;padding:8px 0;">No recent records</div>';}
+    card.innerHTML=
+      '<div class="doctor-header">'+delBtn+
+        '<h3>'+escapeHtml(doc)+'</h3>'+
+        '<div class="doc-sub">Referring Doctor</div>'+
+        '<div style="display:flex;gap:10px;margin-top:10px;font-size:.62rem;color:rgba(255,255,255,.8);">'+
+          '<span>✅ '+( d.completedCount||0)+'</span>'+
+          '<span>⏳ '+(d.pendingCount||0)+'</span>'+
+          '<span>❌ '+(d.cancelledCount||0)+'</span>'+
+          '<span style="margin-left:auto;">📅 Today: '+(d.todayTests||0)+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;height:4px;">'+
+        '<div style="width:'+compPct+'%;background:#28a745;"></div>'+
+        '<div style="width:'+pendPct+'%;background:#ffc107;"></div>'+
+        '<div style="width:'+canPct+'%;background:#e63946;"></div>'+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px;">'+
+        '<div class="doc-metric"><div class="doc-metric-label">📋 Total Tests</div><div class="doc-metric-val tests">'+(d.totalTests||0)+'</div></div>'+
+        '<div class="doc-metric"><div class="doc-metric-label">📅 This Month</div><div class="doc-metric-val tests">'+(d.monthTests||0)+'</div></div>'+
+        '<div class="doc-metric"><div class="doc-metric-label">💰 Test Fees</div><div class="doc-metric-val fees">'+formatCurrency(d.totalTestFees)+'</div></div>'+
+        '<div class="doc-metric"><div class="doc-metric-label">💵 Collected</div><div class="doc-metric-val fees">'+formatCurrency(d.totalPaid)+'</div></div>'+
+        '<div class="doc-metric"><div class="doc-metric-label">⚠️ Due</div><div class="doc-metric-val" style="color:'+(d.totalDue>0?"#e63946":"#059669")+'">'+formatCurrency(d.totalDue)+'</div></div>'+
+        '<div class="doc-metric"><div class="doc-metric-label">💸 Commission</div><div class="doc-metric-val commission">'+formatCurrency(d.totalCommission)+'</div></div>'+
+        '<div class="doc-metric" style="grid-column:1/-1;"><div class="doc-metric-label">📈 Net Revenue</div><div class="doc-metric-val revenue">'+formatCurrency(d.totalRevenue)+'</div></div>'+
+      '</div>'+
+      '<div style="padding:12px 18px;border-top:1px solid #eef2f7;">'+
+        '<div style="font-size:.63rem;font-weight:800;color:#8898aa;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;">🕐 Recent Patients</div>'+
+        recentRows+
+      '</div>'+
+      '<div class="doctor-footer">Updated at '+now+'</div>';
+    c.appendChild(card);
+  });
+}
+
+// ── SAVE / EDIT RECORD ────────────────────────────────────────────────────
+function saveRecord(){var date=document.getElementById("dateOfVisit").value,name=(document.getElementById("customerName").value||"").trim(),phone=(document.getElementById("phoneNumber").value||"").trim(),doctor=document.getElementById("doctorNameSelect").value;if(!date||!name||!phone){showAlert("Fill required fields: Date, Name, Phone","error");return;}if(!selectedTests.size){showAlert("Select at least one test","warning");return;}if(!doctor||doctor==="__add_new__"){showAlert("Select a doctor","warning");return;}var rec={dateOfVisit:date,customerName:name,phoneNumber:phone,age:document.getElementById("age").value,doctorName:doctor,testConducted:getSelectedTestsString(),testFee:getTotalTestFee(),payment:parseFloat(document.getElementById("payment").value)||0,doctorCommissionPercent:parseFloat(document.getElementById("doctorCommissionPercent").value)||0,paymentMethod:document.getElementById("paymentMethod").value,appointmentRefNo:document.getElementById("appointmentRefNo").value,notes:document.getElementById("notes").value,status:document.getElementById("status").value};if(editMode)rec.id=editId;var btn=document.getElementById("mainBtn"),a=actor();btn.disabled=true;btn.innerText=editMode?"⏳ Updating...":"⏳ Saving...";gasRun(editMode?"updateData":"submitData",[rec,a.email,a.role],function(r){btn.disabled=false;btn.innerHTML=editMode?"✏️ Update Record":"💾 Save Record";if(r.success){showAlert("✓ "+r.message);clearForm();loadAllRecords();loadStats();loadDoctorStats();}else{showAlert(r.message,"error");}},function(e){btn.disabled=false;btn.innerHTML=editMode?"✏️ Update Record":"💾 Save Record";showAlert("Error: "+e,"error");});}
+function editRecord(id){gasRun("getRecordById",[id],function(res){if(!res.success){showAlert(res.message,"error");return;}var r=res.record;editMode=true;editId=id;document.getElementById("dateOfVisit").value=r.dateOfVisit;document.getElementById("customerName").value=r.customerName;document.getElementById("phoneNumber").value=r.phoneNumber;document.getElementById("age").value=r.age||"";document.getElementById("doctorNameSelect").value=r.doctorName||"";document.getElementById("payment").value=r.payment;document.getElementById("doctorCommissionPercent").value=r.doctorCommissionPercent;document.getElementById("paymentMethod").value=r.paymentMethod||"";document.getElementById("appointmentRefNo").value=r.appointmentRefNo||"";document.getElementById("notes").value=r.notes||"";document.getElementById("status").value=r.status||"Pending";selectedTests.clear();if(r.testConducted)r.testConducted.split(" + ").forEach(function(t){t=t.trim();if(t&&testPriceMap[t]!==undefined)selectedTests.set(t,testPriceMap[t]);});updateSelectedTests();renderTestCategories(document.getElementById("testSearchInput").value||"");calculateAmounts();document.getElementById("mainBtn").innerHTML="✏️ Update Record";document.getElementById("cancelBtn").style.display="inline-block";switchTab("add");window.scrollTo({top:0,behavior:"smooth"});},function(e){showAlert("Error: "+e,"error");});}
+function clearForm(){editMode=false;editId=null;document.getElementById("dateOfVisit").valueAsDate=new Date();["customerName","phoneNumber","age","payment","doctorCommissionPercent","appointmentRefNo","notes"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("doctorNameSelect").value="";document.getElementById("paymentMethod").value="";document.getElementById("status").value="Pending";document.getElementById("addDoctorPanel").style.display="none";selectedTests.clear();updateSelectedTests();renderTestCategories("");calculateAmounts();document.getElementById("mainBtn").innerHTML="💾 Save Record";document.getElementById("cancelBtn").style.display="none";}
+function cancelEdit(){clearForm();}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function switchTab(tab){
+  document.querySelectorAll(".tab-content").forEach(function(t){t.style.display="none";});
+  document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});
+  if(tab==="add"){document.getElementById("addTab").style.display="block";document.getElementById("tabAdd").classList.add("active");}
+  else if(tab==="view"){if(!canSeeTab("records")&&!isAdmin()){showAlert("🔒 No access to Records tab","error");return;}document.getElementById("viewTab").style.display="block";document.getElementById("tabView").classList.add("active");loadAllRecords();loadStats();renderFilterChips();}
+  else if(tab==="doctors"){if(!canSeeTab("doctors")&&!isAdmin()){showAlert("🔒 No access to Doctor Stats tab","error");return;}document.getElementById("doctorsTab").style.display="block";document.getElementById("tabDoctors").classList.add("active");loadDoctorStats();}
+  else if(tab==="users"){if(!canSeeTab("users")&&!isAdmin()){showAlert("🔒 No access to Users tab","error");return;}document.getElementById("usersTab").style.display="block";document.getElementById("tabUsers").classList.add("active");loadUsers();}
+  else if(tab==="bookings"){if(!canSeeTab("bookings")){showAlert("🔒 No access to Bookings tab","error");return;}document.getElementById("bookingsTab").style.display="block";document.getElementById("tabBookings").classList.add("active");loadBookings();}
+  else if(tab==="audit"){if(!isOwner()){showAlert("🔒 Audit log is Owner-only","error");return;}document.getElementById("auditTab").style.display="block";document.getElementById("tabAudit").classList.add("active");loadAuditLog();}
+  else if(tab==="report"){document.getElementById("reportTab").style.display="block";document.getElementById("tabReport").classList.add("active");initReportTab();}
+}
+function refreshAll(){loadAllRecords();loadStats();loadDoctorStats();showAlert("✓ Dashboard refreshed!");}
+
+// ── PRICES ────────────────────────────────────────────────────────────────
+function loadPrices(){gasRun("getTestPriceList",[],function(p){if(p){for(var k in p){if(testPriceMap[k]===undefined)testPriceMap[k]=p[k];}}renderTestCategories("");},function(){renderTestCategories("");});}
+
+// ── BOOKINGS ──────────────────────────────────────────────────────────────
+var allBookings = [];
+function loadBookings(){
+  document.getElementById("bkTotal").textContent="—";
+  document.getElementById("bkConfirmed").textContent="—";
+  document.getElementById("bkToday").textContent="—";
+  document.getElementById("bkAmount").textContent="—";
+  document.getElementById("bookingsLastUpdated").textContent="Loading...";
+  document.getElementById("bookingsTableBody").innerHTML='<tr><td colspan="8" style="text-align:center;padding:30px;color:#888;">Loading...</td></tr>';
+  document.getElementById("bookingTestBreakdown").innerHTML='<div style="padding:30px;text-align:center;color:#888;">Loading...</div>';
+  gasRun("getBookingsData",[],function(data){
+    if(!data||!data.success){
+      document.getElementById("bookingsTableBody").innerHTML='<tr><td colspan="8" style="padding:20px;color:#e63946;text-align:center;">⚠️ '+(data&&data.message?escapeHtml(data.message):"Could not load Bookings sheet.")+'</td></tr>';
+      return;
+    }
+    allBookings=data.bookings||[];
+    document.getElementById("bkTotal").textContent=data.totalBookings||0;
+    document.getElementById("bkConfirmed").textContent=data.totalConfirmed||0;
+    document.getElementById("bkToday").textContent=data.todayBookings||0;
+    document.getElementById("bkAmount").textContent="\u20B9"+(data.totalAmount||0).toLocaleString("en-IN");
+    document.getElementById("bookingsLastUpdated").textContent=data.lastUpdated?"Last Updated: "+data.lastUpdated:"";
+    renderBookingsTable(allBookings);
+    renderTestBreakdown(data.testBreakdown||[]);
+  },
+  function(e){document.getElementById("bookingsTableBody").innerHTML='<tr><td colspan="8" style="padding:20px;color:#e63946;text-align:center;">Error: '+escapeHtml(e)+'</td></tr>';});
+}
+function renderBookingsTable(rows){
+  var tbody=document.getElementById("bookingsTableBody");
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:30px;color:#888;">No bookings found.</td></tr>';return;}
+  var sorted=rows.slice().reverse();
+  tbody.innerHTML=sorted.map(function(b){
+    var sc=b.status==="Confirmed"?"status-Completed":b.status==="Cancelled"?"status-Cancelled":"status-Pending";
+    var testsShort=b.tests.length>40?b.tests.substring(0,40)+"\u2026":b.tests;
+    return'<tr>'+'<td style="font-weight:700;color:#0891b2;">'+escapeHtml(b.token)+'</td>'+'<td><strong>'+escapeHtml(b.name)+'</strong><br><span style="font-size:.65rem;color:#888;">'+escapeHtml(b.email)+'</span></td>'+'<td>'+escapeHtml(b.phone)+'</td>'+'<td title="'+escapeHtml(b.tests)+'">'+escapeHtml(testsShort)+'</td>'+'<td style="font-weight:700;color:#059669;">\u20B9'+b.amount.toLocaleString("en-IN")+'</td>'+'<td>'+escapeHtml(b.apptDate)+'</td>'+'<td style="white-space:nowrap;font-size:.68rem;">'+escapeHtml(b.timeSlot)+'</td>'+'<td><span class="status-badge '+sc+'">'+escapeHtml(b.status)+'</span></td>'+'</tr>';
+  }).join("");
+}
+function renderTestBreakdown(breakdown){
+  var c=document.getElementById("bookingTestBreakdown");
+  if(!breakdown.length){c.innerHTML='<div style="padding:30px;text-align:center;color:#888;">No test data.</div>';return;}
+  var maxCount=Math.max.apply(null,breakdown.map(function(r){return r.count;}));
+  var html='<div style="padding:8px 0;">';
+  breakdown.forEach(function(r,idx){
+    var pct=maxCount>0?Math.round((r.count/maxCount)*100):0;
+    var bg=idx%2===0?"#fff":"#f8fafc";
+    html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+bg+';border-bottom:1px solid #eef2f7;">'+'<div style="flex:1;font-size:.75rem;font-weight:600;color:#1f3b4c;">'+escapeHtml(r.test)+'</div>'+'<div style="font-size:.8rem;font-weight:800;color:#0891b2;min-width:24px;text-align:right;">'+r.count+'</div>'+'<div style="width:80px;background:#e2e8f0;border-radius:10px;height:7px;overflow:hidden;flex-shrink:0;">'+'<div style="width:'+pct+'%;background:linear-gradient(90deg,#0891b2,#0f766e);height:100%;border-radius:10px;"></div>'+'</div>'+'</div>';
+  });
+  html+='</div>';
+  c.innerHTML=html;
+}
+function filterBookings(){
+  var q=(document.getElementById("bookingSearch").value||"").toLowerCase().trim();
+  if(!q){renderBookingsTable(allBookings);return;}
+  var filtered=allBookings.filter(function(b){
+    return (b.name&&b.name.toLowerCase().indexOf(q)>=0)||
+           (b.phone&&b.phone.indexOf(q)>=0)||
+           (b.tests&&b.tests.toLowerCase().indexOf(q)>=0)||
+           (b.bookingId&&b.bookingId.toLowerCase().indexOf(q)>=0)||
+           (b.token&&b.token.toLowerCase().indexOf(q)>=0)||
+           (b.status&&b.status.toLowerCase().indexOf(q)>=0);
+  });
+  renderBookingsTable(filtered);
+}
+
+// ── PRINT REPORT ──────────────────────────────────────────────────────────
+function getDeploymentUrl() { return getGasUrl() || localStorage.getItem("spg_deploy_url") || ""; }
+function openReportPage(serialNo) {
+  var deployUrl = getDeploymentUrl();
+  if (!deployUrl) {
+    var url = prompt("Enter your Google Apps Script Deployment URL:\n\n(This is the URL you open to access SPG Labs. Paste it here and it will be saved.)");
+    if (!url || !url.trim()) return;
+    url = url.trim().replace(/[?&].*$/, "");
+    localStorage.setItem("spg_deploy_url", url);
+    deployUrl = url;
+  }
+  var reportUrl = deployUrl + "?page=report&id=" + encodeURIComponent(serialNo);
+  window.open(reportUrl, "_blank");
+}
+function resetDeploymentUrl() { localStorage.removeItem("spg_deploy_url"); showAlert("Deployment URL cleared. It will be asked again next time you print.", "warning"); }
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+function initApp(){
+  document.getElementById("dateOfVisit").valueAsDate=new Date();
+  loadDoctorsFromStorage();loadCustomTests();rebuildTestCategories();
+  populateDoctorDropdown();populateRoleDropdown();
+  applyTabVisibility();applyCurrentUserPermissions();
+  loadPrices();loadStats();loadDoctorStats();
+  gasRun("getData",[],function(r){allRecords=r||[];},null);
+}
+
+// ── EVENTS ────────────────────────────────────────────────────────────────
+document.getElementById("doctorNameSelect").addEventListener("change",function(){
+  if(this.value==="__add_new__"){if(!currentUserCan("canAddDoctor")){showAlert("🔒 No permission to add doctors.","warning");this.value="";return;}document.getElementById("addDoctorPanel").style.display="block";this.value="";}
+  else{document.getElementById("addDoctorPanel").style.display="none";}
+});
+["confirmModal","manageDoctorsModal","manageTestsModal","deleteDoctorModal","changePasswordModal","permModal"].forEach(function(id){
+  var el=document.getElementById(id);if(el)el.addEventListener("click",function(e){if(e.target===this)this.style.display="none";});
+});
+
+// ══════════════════════════════════════════════════════════════════════════
+// LAB REPORT TAB
+// ══════════════════════════════════════════════════════════════════════════
+var RPT_TESTS = [];
+var RPT_FILTERED = [];
+
+var RPT_DB = {
+  "HAEMOGLOBIN":{"units":"gm/dl","normalRange":"12.00 – 16.00"},
+  "TOTAL WBC COUNT (TLC)":{"units":"/Cu.mm","normalRange":"4000 – 10000"},
+  "NEUTROPHILS":{"units":"%","normalRange":"50 – 70"},
+  "LYMPHOCYTES":{"units":"%","normalRange":"20 – 40"},
+  "EOSINOPHILS":{"units":"%","normalRange":"1 – 6"},
+  "MONOCYTES":{"units":"%","normalRange":"2 – 10"},
+  "ESR (WESTERGREN)":{"units":"mm","normalRange":"5 – 20"},
+  "PLATELET COUNT":{"units":"Lac./Cu.mm","normalRange":"1.50 – 4.50"},
+  "TOTAL RBC COUNT":{"units":"Million/Cu.mm","normalRange":"4.00 – 6.00"},
+  "MCV":{"units":"fL","normalRange":"85.00 – 95.00"},
+  "MCH":{"units":"pg","normalRange":"28.00 – 32.00"},
+  "MCHC":{"units":"g/dl","normalRange":"32.00 – 34.00"},
+  "HBSAG":{"units":"-","normalRange":"NEGATIVE"},
+  "HIV I":{"units":"-","normalRange":"NON REACTIVE"},
+  "HIV II":{"units":"-","normalRange":"NON REACTIVE"},
+  "HCV":{"units":"-","normalRange":"NON REACTIVE"},
+  "WIDAL SAL. T. O":{"units":"-","normalRange":""},
+  "SAL. T. H":{"units":"-","normalRange":""},
+  "TYPHIDOT":{"units":"-","normalRange":""},
+  "PREGNANCY TEST":{"units":"-","normalRange":""},
+  "MALARIA ANTIGEN":{"units":"-","normalRange":""},
+  "VDRL":{"units":"-","normalRange":""},
+  "DENGUE":{"units":"-","normalRange":""},
+  "ALBUMIN (URINE)":{"units":"mg/dl","normalRange":"<10.0"},
+  "PUS CELLS":{"units":"/h.p.f","normalRange":"0 – 5"},
+  "RBCs (URINE)":{"units":"/h.p.f","normalRange":"0 – 2"},
+  "EPITHELIAL CELLS":{"units":"/h.p.f","normalRange":"FEW"},
+  "SUGAR (GLUCOSE)":{"units":"-","normalRange":"NIL"},
+  "COLOUR":{"units":"-","normalRange":""},
+  "pH":{"units":"-","normalRange":"5.0 – 8.0"},
+  "SPECIFIC GRAVITY":{"units":"-","normalRange":"1.010 – 1.025"},
+  "BACTERIA":{"units":"-","normalRange":""},
+  "SODIUM":{"units":"meq/dl","normalRange":"135.0 – 145.0"},
+  "POTASSIUM":{"units":"meq/dl","normalRange":"3.5 – 5.0"},
+  "IONIC CALCIUM":{"units":"mmol/L","normalRange":"1.1 – 1.4"},
+  "CHOLESTEROL":{"units":"mg/dl","normalRange":"130.0 – 220.0"},
+  "TRIGLYCERIDES":{"units":"mg/dl","normalRange":"<200.0"},
+  "HDL CHOLESTEROL":{"units":"mg/dl","normalRange":"35.0 – 60.0"},
+  "LDL CHOLESTEROL":{"units":"mg/dl","normalRange":"60.0 – 130.0"},
+  "VLDL CHOLESTEROL":{"units":"mg/dl","normalRange":"<35.0"},
+  "CHOL/HDL RATIO":{"units":"RATIO","normalRange":"<5.0"},
+  "LDL/HDL RATIO":{"units":"RATIO","normalRange":"<3.0"},
+  "BILIRUBIN TOTAL":{"units":"mg/dl","normalRange":"0.2 – 0.8"},
+  "BILIRUBIN DIRECT":{"units":"mg/dl","normalRange":"<0.25"},
+  "BILIRUBIN INDIRECT":{"units":"mg/dl","normalRange":"0.2 – 0.6"},
+  "TOTAL PROTEIN":{"units":"gm/dl","normalRange":"6.6 – 8.2"},
+  "ALBUMIN":{"units":"gm/dl","normalRange":"3.5 – 5.0"},
+  "GLOBULIN":{"units":"gm/dl","normalRange":"2.3 – 3.5"},
+  "A/G RATIO":{"units":"-","normalRange":"1.4 – 1.6"},
+  "SGOT (AST)":{"units":"IU/L","normalRange":"<40.0"},
+  "SGPT (ALT)":{"units":"IU/L","normalRange":"<40.0"},
+  "ALKALINE PHOSPHATASE":{"units":"IU/L","normalRange":"98.0 – 279.0"},
+  "BLOOD SUGAR RANDOM":{"units":"mg/dl","normalRange":"70.0 – 150.0"},
+  "BLOOD SUGAR FASTING":{"units":"mg/dl","normalRange":"70.0 – 100.0"},
+  "BLOOD SUGAR PP":{"units":"mg/dl","normalRange":"<140.0"},
+  "BLOOD UREA":{"units":"mg/dl","normalRange":"15.0 – 45.0"},
+  "CREATININE":{"units":"mg/dl","normalRange":"0.6 – 1.4"},
+  "CALCIUM":{"units":"mg/dl","normalRange":"8.5 – 11.0"},
+  "PHOSPHORUS":{"units":"mg/dl","normalRange":"2.5 – 5.5"},
+  "URIC ACID":{"units":"mg/dl","normalRange":"3.4 – 7.0"},
+  "T3":{"units":"ng/dL","normalRange":"80 – 200"},
+  "T4":{"units":"µg/dL","normalRange":"5 – 12"},
+  "TSH":{"units":"µIU/mL","normalRange":"0.4 – 4.5"},
+  "FT3":{"units":"pg/mL","normalRange":"2.3 – 4.2"},
+  "FT4":{"units":"ng/dL","normalRange":"0.8 – 1.8"},
+  "HbA1c":{"units":"%","normalRange":"4 – 5.6"},
+  "PSA":{"units":"ng/mL","normalRange":"<4.0"},
+  "PROLACTIN":{"units":"ng/mL","normalRange":"2.0 – 18.0"},
+  "LH":{"units":"mIU/mL","normalRange":"1.7 – 8.6"},
+  "FSH":{"units":"mIU/mL","normalRange":"1.5 – 12.4"}
+};
+
+var RPT_ALL_NAMES = Object.keys(RPT_DB).sort();
+RPT_FILTERED = RPT_ALL_NAMES.slice();
+
+function rptEsc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function initReportTab(){
+  var d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),dd=String(d.getDate()).padStart(2,"0");
+  var rptDate=document.getElementById("rpt_date");
+  if(rptDate&&!rptDate.value) rptDate.value=y+"-"+m+"-"+dd;
+  if(!RPT_TESTS.length){ RPT_TESTS=[{name:"",result:"",unit:"",normalRange:"",remark:""}]; }
+  rptRenderCards();
+  rptUpdatePreview();
+}
+function rptRenderCards(){
+  var c=document.getElementById("rptTestCards"); if(!c)return;
+  c.innerHTML="";
+  RPT_TESTS.forEach(function(t,i){
+    var opts='<option value="">-- Select Test --</option>';
+    RPT_FILTERED.forEach(function(nm){opts+='<option value="'+rptEsc(nm)+'"'+(t.name===nm?" selected":"")+'>'+rptEsc(nm)+'</option>';});
+    if(t.name&&RPT_FILTERED.indexOf(t.name)<0&&t.name!==""){opts+='<option value="'+rptEsc(t.name)+'" selected>'+rptEsc(t.name)+' (custom)</option>';}
+    var card=document.createElement("div");
+    card.style.cssText="background:#f8fafc;border-radius:12px;padding:12px;border:1.5px solid #eef2f7;margin-bottom:8px;";
+    card.innerHTML=
+      "<div style='font-size:.75rem;font-weight:700;color:#1f3b4c;background:#e8f0fe;border-radius:7px;padding:4px 9px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;'>" +
+        "<span>🔬 Test "+(i+1)+"</span>" +
+        "<button onclick='rptRemove("+i+")' style='background:none;border:none;color:#e63946;cursor:pointer;font-size:.9rem;'>✕</button>" +
+      "</div>" +
+      "<select id='rptSel_"+i+"' onchange='rptOnSelect("+i+")' style='width:100%;padding:7px 8px;border-radius:8px;border:1.5px solid #cbd5e1;background:white;font-size:.78rem;margin-bottom:8px;'>"+opts+"</select>" +
+      "<div style='display:flex;flex-direction:column;gap:4px;margin-bottom:6px;'>" +
+        "<label style='font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;'>Test Name (Custom)</label>" +
+        "<input id='rptName_"+i+"' value='"+rptEsc(t.name)+"' placeholder='Custom test name' oninput='rptSync("+i+")' style='padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;'>" +
+      "</div>" +
+      "<div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;'>" +
+        "<div style='display:flex;flex-direction:column;gap:4px;'><label style='font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;'>Result</label>" +
+          "<input id='rptRes_"+i+"' value='"+rptEsc(t.result)+"' placeholder='Value' oninput='rptSync("+i+")' style='padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;'></div>" +
+        "<div style='display:flex;flex-direction:column;gap:4px;'><label style='font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;'>Unit</label>" +
+          "<input id='rptUnit_"+i+"' value='"+rptEsc(t.unit)+"' placeholder='mg/dL' oninput='rptSync("+i+")' style='padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;'></div>" +
+        "<div style='display:flex;flex-direction:column;gap:4px;'><label style='font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;'>Normal Range</label>" +
+          "<input id='rptNorm_"+i+"' value='"+rptEsc(t.normalRange)+"' placeholder='e.g. 70–100' oninput='rptSync("+i+")' style='padding:7px 10px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.82rem;width:100%;'></div>" +
+        "<div style='display:flex;flex-direction:column;gap:4px;'><label style='font-size:.64rem;font-weight:700;color:#8898aa;text-transform:uppercase;'>Remark</label>" +
+          "<select id='rptRmk_"+i+"' onchange='rptSync("+i+")' style='padding:7px 8px;border:1.5px solid #e2edf2;border-radius:10px;font-size:.78rem;width:100%;background:#fefefe;'>" +
+            "<option value=''>—</option>" +
+            "<option value='Normal'"+(t.remark==="Normal"?" selected":"")+">Normal</option>" +
+            "<option value='HIGH'"+(t.remark==="HIGH"?" selected":"")+">HIGH ▲</option>" +
+            "<option value='LOW'"+(t.remark==="LOW"?" selected":"")+">LOW ▼</option>" +
+            "<option value='Positive'"+(t.remark==="Positive"?" selected":"")+">Positive</option>" +
+            "<option value='Negative'"+(t.remark==="Negative"?" selected":"")+">Negative</option>" +
+            "<option value='Reactive'"+(t.remark==="Reactive"?" selected":"")+">Reactive</option>" +
+            "<option value='Non-Reactive'"+(t.remark==="Non-Reactive"?" selected":"")+">Non-Reactive</option>" +
+          "</select></div>" +
+      "</div>";
+    c.appendChild(card);
+  });
+}
+function rptOnSelect(i){
+  var sel=document.getElementById("rptSel_"+i); if(!sel)return;
+  var nm=sel.value;
+  if(nm&&RPT_DB[nm]){
+    RPT_TESTS[i].name=nm;RPT_TESTS[i].unit=RPT_DB[nm].units;RPT_TESTS[i].normalRange=RPT_DB[nm].normalRange;
+  }else{ RPT_TESTS[i].name=nm||""; }
+  var n=document.getElementById("rptName_"+i),u=document.getElementById("rptUnit_"+i),nr=document.getElementById("rptNorm_"+i);
+  if(n)n.value=RPT_TESTS[i].name;if(u)u.value=RPT_TESTS[i].unit;if(nr)nr.value=RPT_TESTS[i].normalRange;
+  rptUpdatePreview();
+}
+function rptSync(i){
+  if(!RPT_TESTS[i])return;
+  var n=document.getElementById("rptName_"+i),r=document.getElementById("rptRes_"+i),u=document.getElementById("rptUnit_"+i),nr=document.getElementById("rptNorm_"+i),rmk=document.getElementById("rptRmk_"+i);
+  if(n)RPT_TESTS[i].name=n.value;if(r)RPT_TESTS[i].result=r.value;if(u)RPT_TESTS[i].unit=u.value;if(nr)RPT_TESTS[i].normalRange=nr.value;if(rmk)RPT_TESTS[i].remark=rmk.value;
+  rptUpdatePreview();
+}
+function rptAddTest(){RPT_TESTS.push({name:"",result:"",unit:"",normalRange:"",remark:""});rptRenderCards();rptUpdatePreview();setTimeout(function(){var sb=document.getElementById("rptSidebar");if(sb)sb.scrollTop=sb.scrollHeight;},60);}
+function rptRemove(i){RPT_TESTS.splice(i,1);rptRenderCards();rptUpdatePreview();}
+function rptClearAll(){if(confirm("Clear all test rows?")){RPT_TESTS=[];rptRenderCards();rptUpdatePreview();}}
+function rptSet(id,val){var el=document.getElementById(id);if(el)el.textContent=val;}
+
+function rptUpdatePreview(){
+  var now=new Date();
+  var reported=now.toLocaleDateString("en-IN")+"  "+now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+  var name=document.getElementById("rpt_name")?document.getElementById("rpt_name").value:"";
+  var age=document.getElementById("rpt_age")?document.getElementById("rpt_age").value:"";
+  var gender=document.getElementById("rpt_gender")?document.getElementById("rpt_gender").value:"";
+  var dateInp=document.getElementById("rpt_date");
+  var dateStr=dateInp&&dateInp.value?new Date(dateInp.value+"T00:00:00").toLocaleDateString("en-IN"):now.toLocaleDateString("en-IN");
+  rptSet("rv_serial",document.getElementById("rpt_serial")?document.getElementById("rpt_serial").value:"");
+  rptSet("rv_name",name||"—");
+  rptSet("rv_age_gender",(age?age+" Yrs ":"")+gender);
+  rptSet("rv_date",dateStr);
+  rptSet("rv_doctor",document.getElementById("rpt_doctor")?document.getElementById("rpt_doctor").value:"—");
+  rptSet("rv_sample",document.getElementById("rpt_sample")?document.getElementById("rpt_sample").value:"—");
+  var notesEl=document.getElementById("rv_notes");
+  var notesVal=document.getElementById("rpt_notes")?document.getElementById("rpt_notes").value:"";
+  if(notesEl){notesEl.style.display=notesVal?"block":"none";notesEl.innerHTML=notesVal?"<b>Notes:</b> "+rptEsc(notesVal):"";}
+  var tbody=document.getElementById("rv_tbody"); if(!tbody)return;
+  tbody.innerHTML="";
+  if(!RPT_TESTS.length){
+    tbody.innerHTML="<tr><td colspan='5' style='text-align:center;padding:16px;color:#aaa;font-size:9pt;font-family:Times New Roman,serif;'>— Add tests using the left panel —</td></tr>";
+    return;
+  }
+  RPT_TESTS.forEach(function(t,i){
+    var rmk=(t.remark||"").toUpperCase();
+    var isAbnl=rmk==="HIGH"||rmk==="LOW";
+    var rc=isAbnl?"#cc0000":"#111";
+    var rkc=isAbnl?"#cc0000":rmk==="NORMAL"?"#006600":"#555";
+    var rkw=(isAbnl||rmk==="NORMAL")?"bold":"normal";
+    var bg=i%2===0?"#ffffff":"#f9f9f9";
+    var tr=document.createElement("tr");tr.style.background=bg;
+    var tdN=document.createElement("td");
+    tdN.style.cssText="padding:5px 8px;border-bottom:1px solid #e0e0e0;font-family:'Times New Roman',serif;font-size:9pt;";
+    tdN.textContent=t.name||"—";tr.appendChild(tdN);
+    var tdR=document.createElement("td");
+    tdR.style.cssText="text-align:center;padding:3px 6px;border-bottom:1px solid #e0e0e0;";
+    var inp=document.createElement("input");
+    inp.type="text"; inp.value=t.result||""; inp.placeholder="—";
+    inp.style.cssText="border:none;background:transparent;width:100%;font-size:9pt;font-family:'Times New Roman',serif;font-weight:bold;text-align:center;outline:none;color:"+rc+";";
+    inp.setAttribute("data-i",i);
+    inp.addEventListener("input",function(){
+      var ix=parseInt(this.getAttribute("data-i"));
+      if(RPT_TESTS[ix])RPT_TESTS[ix].result=this.value;
+      var sb=document.getElementById("rptRes_"+ix);if(sb)sb.value=this.value;
+    });
+    inp.addEventListener("focus",function(){this.style.background="#fff9c4";this.style.borderRadius="3px";});
+    inp.addEventListener("blur",function(){this.style.background="transparent";this.style.borderRadius="0";});
+    tdR.appendChild(inp);tr.appendChild(tdR);
+    var tdU=document.createElement("td");
+    tdU.style.cssText="text-align:center;padding:5px 8px;border-bottom:1px solid #e0e0e0;font-family:'Times New Roman',serif;font-size:9pt;color:#555;";
+    tdU.textContent=t.unit||"";tr.appendChild(tdU);
+    var tdNr=document.createElement("td");
+    tdNr.style.cssText="text-align:center;padding:5px 8px;border-bottom:1px solid #e0e0e0;font-family:'Times New Roman',serif;font-size:9pt;";
+    tdNr.textContent=t.normalRange||"";tr.appendChild(tdNr);
+    var tdMk=document.createElement("td");
+    tdMk.style.cssText="text-align:center;padding:5px 8px;border-bottom:1px solid #e0e0e0;font-family:'Times New Roman',serif;font-size:8.5pt;font-weight:"+rkw+";color:"+rkc+";";
+    tdMk.textContent=t.remark||"";tr.appendChild(tdMk);
+    tbody.appendChild(tr);
+  });
+}
+
+function rptDoPrint(){
+  rptUpdatePreview();
+  var a4=document.getElementById("rptA4");
+  if(!a4){showAlert("Report not ready","error");return;}
+  var clone=a4.cloneNode(true);
+  clone.querySelectorAll("input").forEach(function(inp){
+    var span=document.createElement("span");
+    span.textContent=inp.value||"";
+    span.style.cssText=inp.style.cssText||"";
+    span.style.display="inline-block";
+    span.style.width="100%";
+    span.style.textAlign="center";
+    span.style.fontFamily="'Times New Roman',serif";
+    span.style.fontSize="9pt";
+    span.style.fontWeight="bold";
+    inp.parentNode.replaceChild(span,inp);
+  });
+  var doc="<!DOCTYPE html><html><head><meta charset='UTF-8'>" +
+    "<style>" +
+      "*{margin:0;padding:0;box-sizing:border-box;}" +
+      "@page{size:A4 portrait;margin:0;}" +
+      "body{background:white;font-family:'Times New Roman',Times,serif;}" +
+      ".a4-wrap{width:210mm;min-height:297mm;background:white;margin:0 auto;}" +
+    "</style></head><body>" +
+    "<div class='a4-wrap'>" + clone.innerHTML + "</div>" +
+    "</body></html>";
+  var w=window.open("","_blank","width=900,height=700");
+  if(!w){showAlert("Pop-up blocked. Please allow pop-ups for this site.","error");return;}
+  w.document.open();
+  w.document.write(doc);
+  w.document.close();
+  w.onload=function(){setTimeout(function(){w.focus();w.print();},300);};
+  setTimeout(function(){w.focus();w.print();},800);
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// PWA LAYER — Install, Service Worker, Offline, Shortcuts, Updates
+// ════════════════════════════════════════════════════════════════════════════
+var PWA = (function () {
   var deferredInstallPrompt = null;
-  var fallbackBtn = $("installFallback");
+  var swRegistration = null;
+  var refreshing = false;
+  var BASE_URL = "";
+
+  function isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+  function isIOSSafari() {
+    if (!isIOS()) return false;
+    var ua = navigator.userAgent;
+    return /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|mercury/.test(ua);
+  }
+  function isStandalone() {
+    return window.matchMedia("(display-mode: standalone)").matches ||
+           window.matchMedia("(display-mode: minimal-ui)").matches ||
+           window.navigator.standalone === true;
+  }
+  function isDesktop() { return !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent); }
+
+  function showInstallBtn() { var b = document.getElementById("pwaInstallBtn"); if (b) b.classList.add("show"); var l = document.getElementById("loginInstallBtn"); if (l) l.style.display = "block"; }
+  function hideInstallBtn() { var b = document.getElementById("pwaInstallBtn"); if (b) b.classList.remove("show"); var l = document.getElementById("loginInstallBtn"); if (l) l.style.display = "none"; }
 
   window.addEventListener("beforeinstallprompt", function (e) {
     e.preventDefault();
     deferredInstallPrompt = e;
+    if (!isStandalone()) showInstallBtn();
   });
+
   window.addEventListener("appinstalled", function () {
     deferredInstallPrompt = null;
-    fallbackBtn.classList.remove("show");
-    showToast("✅ SPG Labs installed");
+    hideInstallBtn();
+    console.log("[PWA] App installed");
   });
 
-  function showIOSBanner() { var b = $("iosBanner"); b.style.display = "block"; void b.offsetWidth; b.classList.add("show"); }
-  function hideIOSBanner() {
-    var b = $("iosBanner"); b.classList.remove("show");
-    setTimeout(function () { b.style.display = "none"; }, 400);
-  }
-  $("iosLater").addEventListener("click", hideIOSBanner);
-  $("iosOk").addEventListener("click", hideIOSBanner);
-
-  async function requestInstall() {
-    if (isStandalone()) return;
+  window.triggerInstall = function () {
+    if (isStandalone()) { hideInstallBtn(); return; }
+    if (isIOSSafari()) { document.getElementById("iosInstallBanner").classList.add("show"); return; }
     if (!deferredInstallPrompt) {
-      if (isIOSSafari()) showIOSBanner();
-      else showToast("Browser menu → Install app / Add to Home screen", null, null, 5000);
+      alert("To install: tap your browser menu (⋮) → 'Install app' or 'Add to Home screen'.");
       return;
     }
-    try {
-      deferredInstallPrompt.prompt();
-      await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(function (choice) {
+      if (choice.outcome === "accepted") { console.log("[PWA] Install accepted"); hideInstallBtn(); }
+      else { console.log("[PWA] Install dismissed"); }
       deferredInstallPrompt = null;
-      fallbackBtn.classList.remove("show");
-    } catch (err) {
-      // Click came from inside the app frame and the browser did not pass the gesture on:
-      // show a direct button the user can tap.
-      fallbackBtn.classList.add("show");
-    }
-  }
-  fallbackBtn.addEventListener("click", requestInstall);
-
-  // The in-app header "Install App" button (inside the Apps Script page) posts a message here
-  window.addEventListener("message", function (e) {
-    var d = e.data;
-    if (!d || typeof d !== "object" || typeof d.type !== "string") return;
-    if (e.origin === location.origin) {
-      if (d.type === "spg:online") onBackOnline();
-      return;
-    }
-    if (!/^https:\/\/([a-z0-9-]+\.)*(googleusercontent|google)\.com$/.test(e.origin)) return;
-    if (d.type === "spg:install") requestInstall();
-  });
-
-  // ── Service worker ───────────────────────────────────────────────────────
-  if ("serviceWorker" in navigator) {
-    var hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.addEventListener("controllerchange", function () {
-      if (hadController) showToast("🚀 App updated", "Reload", function () { location.reload(); }, 8000);
-      hadController = true;
     });
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.register("sw.js").then(function (reg) {
+  };
+
+  window.dismissIosBanner = function () {
+    document.getElementById("iosInstallBanner").classList.remove("show");
+    try { localStorage.setItem("spg_ios_banner_dismissed", Date.now()); } catch (e) {}
+  };
+
+  function maybeShowIosBanner() {
+    if (!isIOSSafari() || isStandalone()) return;
+    try {
+      var last = parseInt(localStorage.getItem("spg_ios_banner_dismissed") || "0");
+      if (last && (Date.now() - last) < 3 * 24 * 60 * 60 * 1000) return;
+    } catch (e) {}
+    setTimeout(function () {
+      var b = document.getElementById("iosInstallBanner");
+      if (b) b.classList.add("show");
+    }, 4000);
+  }
+
+  function registerSW() {
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("sw.js")
+      .then(function (reg) {
+        swRegistration = reg;
         setInterval(function () { reg.update(); }, 60 * 60 * 1000);
-      }).catch(function () {});
+        console.log("[PWA] SW registered:", reg.scope);
+        reg.addEventListener("updatefound", function () {
+          var nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener("statechange", function () {
+            if (nw.state === "installed" && navigator.serviceWorker.controller) {
+              showUpdateToast();
+            }
+          });
+        });
+      })
+      .catch(function (err) { console.warn("[PWA] SW registration failed:", err); });
+
+    navigator.serviceWorker.addEventListener("message", function (e) {
+      if (e.data === "SW_UPDATED") showUpdateToast();
     });
   }
 
-  // ── Go ───────────────────────────────────────────────────────────────────
-  loadApp();
+  function showUpdateToast() {
+    var t = document.getElementById("updateToast");
+    if (t) t.classList.add("show");
+  }
+  window.applyPwaUpdate = function () {
+    if (swRegistration && swRegistration.waiting) {
+      swRegistration.waiting.postMessage("SKIP_WAITING");
+    }
+    setTimeout(function () { location.reload(); }, 300);
+  };
+
+  function updateOnlineStatus() {
+    var t = document.getElementById("offlineToast");
+    var txt = document.getElementById("offlineToastText");
+    if (!t) return;
+    if (navigator.onLine) {
+      t.classList.add("online");
+      if (txt) txt.textContent = "Back online";
+      t.classList.add("show");
+      setTimeout(function () { t.classList.remove("show"); }, 2500);
+    } else {
+      t.classList.remove("online");
+      if (txt) txt.textContent = "You're offline — cached mode";
+      t.classList.add("show");
+    }
+  }
+  window.addEventListener("online", updateOnlineStatus);
+  window.addEventListener("offline", updateOnlineStatus);
+
+  function handleUrlParams() {
+    var params = new URLSearchParams(location.search);
+    var tab = params.get("tab");
+    if (tab && typeof switchTab === "function") {
+      var tries = 0;
+      var iv = setInterval(function () {
+        tries++;
+        if (typeof switchTab === "function" && document.getElementById("mainApp") &&
+            document.getElementById("mainApp").style.display !== "none" && typeof currentUser !== "undefined" && currentUser) {
+          clearInterval(iv);
+          try { switchTab(tab); } catch (e) { console.warn(e); }
+        }
+        if (tries > 2400) clearInterval(iv);
+      }, 250);
+    }
+  }
+
+  function init() {
+    BASE_URL = location.origin + location.pathname;
+    try {
+      var sp = new URLSearchParams(location.search);
+      if (sp.get("source") === "pwa" || isStandalone()) {
+        localStorage.setItem("spg_pwa_launches", String((parseInt(localStorage.getItem("spg_pwa_launches"), 10) || 0) + 1));
+        console.log("[PWA] launch tracked · source:", sp.get("source") || "standalone");
+      }
+    } catch (e) {}
+    if (isStandalone()) hideInstallBtn();
+    else if (isIOSSafari()) showInstallBtn();
+    if (document.readyState === "complete") registerSW();
+    else window.addEventListener("load", registerSW);
+    handleUrlParams();
+    navigator.serviceWorker && navigator.serviceWorker.addEventListener("controllerchange", function () {
+      if (refreshing) return;
+      refreshing = true;
+    });
+    console.log("[PWA] Initialized · standalone:", isStandalone(), "· iOS Safari:", isIOSSafari());
+  }
+
+  return { init: init, isStandalone: isStandalone, isIOSSafari: isIOSSafari };
 })();
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", PWA.init);
+} else {
+  PWA.init();
+}
+
+// ── Phone tab bar: split "➕ Label" into icon + label (desktop look unchanged) ──
+(function(){
+  function prep(){
+    document.querySelectorAll(".tab-btn").forEach(function(b){
+      if(b.querySelector(".ti"))return;
+      var t=(b.textContent||"").trim(),i=t.indexOf(" ");
+      if(i<1)return;
+      b.innerHTML='<span class="ti">'+t.slice(0,i)+'</span><span class="tl">'+t.slice(i+1)+'</span>';
+    });
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",prep);else prep();
+  var _st=window.switchTab;
+  document.addEventListener("DOMContentLoaded",function(){
+    if(typeof window.switchTab==="function"&&!window.__stWrapped){window.__stWrapped=1;var o=window.switchTab;window.switchTab=function(t){o(t);try{var a=document.querySelector(".tab-btn.active");if(a&&a.scrollIntoView)a.scrollIntoView({inline:"center",block:"nearest"});}catch(e){}};}
+  });
+})();
+// ── First launch: ask for the server URL if it is not configured ──
+document.addEventListener("DOMContentLoaded",function(){
+  if(!getGasUrl()){var g=document.getElementById("gasSetup");if(g)g.style.display="flex";}
+  if(/[?&]setup=1/.test(location.search)){try{localStorage.removeItem("spg_gas_url");}catch(e){}var g2=document.getElementById("gasSetup");if(g2)g2.style.display="flex";}
+});
 </script>
+
 </body>
 </html>
