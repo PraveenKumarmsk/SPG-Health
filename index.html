@@ -799,7 +799,7 @@ var searchDebounceTimer=null,permModalEmail=null,permModalPerms=null;
 
 // ── SERVER BRIDGE ─────────────────────────────────────────────────────────
 // Paste your Apps Script Web app URL (ends with /exec) here. Leave "" to be asked once on first launch.
-var GAS_URL = "";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbylXAxoElQ-1ymYSxMq-Iu5nP888QdqIZEYbkT1cIeuieTxyzbMM5IYVlXjtd-nSw6n/exec";
 function getGasUrl(){
   var u=(GAS_URL||"").trim();
   if(!u){try{u=localStorage.getItem("spg_gas_url")||"";}catch(e){}}
@@ -825,7 +825,11 @@ function gasRun(fn,args,ok,fail){
       if(j&&j.__error)throw new Error(j.__error);
       (ok||function(){})(j?j.result:undefined);
     })
-    .catch(function(e){onFail((e&&e.message)||String(e));});
+    .catch(function(e){
+      var m=(e&&e.message)||String(e);
+      if(/failed to fetch|networkerror|load failed/i.test(m))m="Server tak nahi pahunch paya. Check karo: (1) Apps Script me Api.gs add karke 'New version' deploy kiya, (2) Who has access = Anyone, (3) /exec URL sahi hai (galat ho to .../index.html?setup=1 kholo).";
+      onFail(m);
+    });
 }
 function showAlert(msg,type){var d=document.createElement("div");d.className="alert";d.style.background=type==="error"?"#c0392b":type==="warning"?"#d39e00":"#1f2f3e";d.innerText=msg;document.body.appendChild(d);setTimeout(function(){d.remove();},4000);}
 function escapeHtml(s){return(s||"").replace(/[&<>"']/g,function(m){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];});}
